@@ -16,6 +16,7 @@ jobs:
         uses: hashicorp/vault-action@v3
         with:
           url: ${{ vars.VAULT_ADDR }}
+          tlsSkipVerify: true
           method: jwt
           path: ${{ vars.VAULT_AUTH_PATH }}
           role: ${{ vars.VAULT_AUTH_ROLE }}
