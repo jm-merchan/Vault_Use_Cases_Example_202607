@@ -1,0 +1,28 @@
+name: vault-oidc
+on:
+  workflow_dispatch:
+jobs:
+  read-secret:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import Vault Secrets
+        id: vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ vars.VAULT_ADDR }}
+          method: jwt
+          path: ${{ vars.VAULT_AUTH_PATH }}
+          role: ${{ vars.VAULT_AUTH_ROLE }}
+          secrets: |
+            secret/data/gha/demo api_key | API_KEY
+
+      - name: Use Secret
+        run: |
+          test -n "${API_KEY}"
+          echo "Secret loaded successfully"
