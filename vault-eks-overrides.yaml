@@ -1,0 +1,125 @@
+global:
+  enabled: true
+  tlsDisable: false
+
+csi:
+  enabled: true
+  image:
+    repository: docker.io/hashicorp/vault-csi-provider
+
+injector:
+  enabled: true
+  image:
+    repository: docker.io/hashicorp/vault-k8s
+  agentImage:
+    repository: docker.io/hashicorp/vault
+
+logLevel: trace
+
+server:
+  serviceAccount:
+    create: true
+    name: vault
+    annotations:
+      eks.amazonaws.com/role-arn: ${VAULT_IRSA_ROLE_ARN}
+      eks.amazonaws.com/sts-regional-endpoints: "true"
+
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+
+  image:
+    repository: docker.io/hashicorp/vault-enterprise
+    tag: 2.0.3-ent
+
+  enterpriseLicense:
+    secretName: vault-ent-license
+
+  extraEnvironmentVars:
+    VAULT_CACERT: /vault/userconfig/vault-ha-tls/vault.ca
+    VAULT_TLSCERT: /vault/userconfig/vault-ha-tls/vault.crt
+    VAULT_TLSKEY: /vault/userconfig/vault-ha-tls/vault.key
+
+  volumes:
+    - name: userconfig-vault-ha-tls
+      secret:
+        defaultMode: 420
+        secretName: vault-ha-tls
+
+  volumeMounts:
+    - name: userconfig-vault-ha-tls
+      mountPath: /vault/userconfig/vault-ha-tls
+      readOnly: true
+
+  standalone:
+    enabled: false
+
+  affinity: ""
+
+  # Spread six Vault servers evenly: two per availability zone.
+  topologySpreadConstraints:
+    - maxSkew: 1
+      minDomains: 3
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: vault
+          app.kubernetes.io/instance: vault
+          component: server
+
+  ha:
+    enabled: true
+    replicas: 6
+    raft:
+      enabled: true
+      setNodeId: true
+      redundancyZones:
+        enabled: true
+      config: |
+        ui = true
+
+        seal "awskms" {
+          region     = "eu-central-1"
+          kms_key_id = "alias/vault-auto-unseal"
+        }
+
+        listener "tcp" {
+          tls_disable       = 0
+          address           = "[::]:8200"
+          cluster_address   = "[::]:8201"
+          tls_cert_file     = "/vault/userconfig/vault-ha-tls/vault.crt"
+          tls_key_file      = "/vault/userconfig/vault-ha-tls/vault.key"
+          tls_client_ca_file = "/vault/userconfig/vault-ha-tls/vault.ca"
+        }
+
+        storage "raft" {
+          path                      = "/vault/data"
+          autopilot_redundancy_zone = "VAULT_REDUNDANCY_ZONE"
+
+          retry_join {
+            auto_join             = "provider=k8s namespace=vault label_selector=\"component=server,app.kubernetes.io/name=vault\""
+            auto_join_scheme      = "https"
+            leader_ca_cert_file   = "/vault/userconfig/vault-ha-tls/vault.ca"
+            leader_tls_servername = "vault-0.vault-internal"
+          }
+        }
+
+        telemetry {
+          disable_hostname          = true
+          prometheus_retention_time = "12h"
+        }
+
+        disable_mlock = true
+        service_registration "kubernetes" {}
+
+# Vault UI and API exposed through an internet-facing AWS load balancer.
+ui:
+  enabled: true
+  serviceType: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  serviceNodePort: null
+  externalPort: 443
+  targetPort: 8200
