@@ -1,0 +1,90 @@
+{
+  "mcpServers": {
+    "aws-documentation-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "AWS_DOCUMENTATION_PARTITION": "aws",
+        "MCP_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      }
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "-e",
+        "GITHUB_TOOLSETS",
+        "-e",
+        "GITHUB_READ_ONLY",
+        "-e",
+        "GITHUB_HOST",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "$GITHUB_TOKEN",
+        "GITHUB_TOOLSETS": "",
+        "GITHUB_READ_ONLY": "",
+        "GITHUB_HOST": ""
+      }
+    },
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "TFE_TOKEN",
+        "-e",
+        "TFE_ADDRESS",
+        "-e",
+        "ENABLE_TF_OPERATIONS",
+        "hashicorp/terraform-mcp-server:latest"
+      ],
+      "env": {
+        "TFE_TOKEN": "$TFE_TOKEN",
+        "TFE_ADDRESS": "https://app.terraform.io",
+        "ENABLE_TF_OPERATIONS": ""
+      },
+      "alwaysAllow": [
+        "get_module_details",
+        "get_policy_details",
+        "get_latest_provider_version",
+        "get_latest_module_version",
+        "get_private_module_details",
+        "get_private_provider_details",
+        "get_provider_capabilities",
+        "get_provider_details",
+        "get_run_details",
+        "get_workspace_details",
+        "list_runs",
+        "list_terraform_orgs",
+        "list_terraform_projects",
+        "list_variable_sets",
+        "list_workspace_variables",
+        "list_workspaces",
+        "read_workspace_tags",
+        "search_modules",
+        "search_policies",
+        "search_private_modules",
+        "search_private_providers",
+        "search_providers"
+      ]
+    },
+    "google-developer-knowledge": {
+      "url": "https://developerknowledge.googleapis.com/mcp",
+      "headers": {
+        "X-goog-api-key": "$GOOGLE_API_KEY",
+        "X-goog-user-project": "$GOOGLE_CLOUD_PROJECT"
+      }
+    },
+    "microsoft-learn": {
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}

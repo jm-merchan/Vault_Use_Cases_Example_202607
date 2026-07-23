@@ -1,1 +1,8 @@
 *hclic
+*env
+.vault/
+.terraform
+*tfstate
+*lock*
+*backup*
+.DS_Store
