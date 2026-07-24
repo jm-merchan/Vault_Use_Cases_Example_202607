@@ -2,4 +2,7 @@
 !.dockerignore
 !Dockerfile
 !Vault.Dockerfile
+!OracleSeveralPlugins.Dockerfile
 !docker-entrypoint.sh
+!oracle-plugin-ic19.sh
+!oracle-plugin-ic23.sh
