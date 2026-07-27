@@ -13,7 +13,6 @@ variable "azure_location" {
 variable "azure_subscription_id" {
   description = "Azure subscription ID used by the AzureRM provider."
   type        = string
-  default     = "<azure-subscription-id>"
 }
 
 variable "name_prefix" {

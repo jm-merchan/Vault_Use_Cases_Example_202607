@@ -1,5 +1,6 @@
 *hclic
 *env
+!.env.example
 .vault/
 .terraform
 *tfstate
