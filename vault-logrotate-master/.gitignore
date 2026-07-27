@@ -1,0 +1,15 @@
+# Binaries for programs and plugins
+vault-logrotate
+html
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+*.code-workspace
+*.test
+*.out
+
+# godoc files
+docs/godoc/**
+
