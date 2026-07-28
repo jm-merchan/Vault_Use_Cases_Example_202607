@@ -391,6 +391,28 @@ jobs:
           done
           echo "Application URL: http://${endpoint}"
 
+          # Kubernetes publishes the hostname before an AWS NLB necessarily has
+          # healthy targets or a resolvable DNS record. Do not report success
+          # until the application is reachable through the public listener.
+          for attempt in $(seq 1 60); do
+            http_code=$(curl --silent --show-error \
+              --output "${RUNNER_TEMP}/secret-ui.html" \
+              --write-out '%{http_code}' \
+              --connect-timeout 5 \
+              --max-time 10 \
+              "http://${endpoint}/" 2>/dev/null || true)
+            if [[ "${http_code}" == "200" ]] &&
+              grep -q 'Secret delivered.' "${RUNNER_TEMP}/secret-ui.html"; then
+              break
+            fi
+            [[ "${attempt}" == "60" ]] && {
+              echo "NLB did not become reachable: http=${http_code:-000}" >&2
+              exit 1
+            }
+            sleep 5
+          done
+          echo "Public NLB validation returned HTTP 200."
+
       - name: Revoke the dynamic Kubernetes credential
         if: always()
         shell: bash
