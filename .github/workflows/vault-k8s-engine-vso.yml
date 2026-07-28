@@ -351,6 +351,8 @@ jobs:
             namespace: ${APP_NAMESPACE}
             annotations:
               service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+              # Required by the EKS in-tree service controller to provision an NLB.
+              service.beta.kubernetes.io/aws-load-balancer-type: nlb
           spec:
             type: LoadBalancer
             selector:
