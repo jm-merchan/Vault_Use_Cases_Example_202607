@@ -106,7 +106,7 @@ jobs:
             local namespace=${3:-}
             local data=${4:-}
             local args=(
-              --silent --show-error --fail
+              --silent --show-error --fail-with-body
               --request "${method}"
               --header "X-Vault-Token: ${VAULT_TOKEN}"
             )
@@ -116,6 +116,7 @@ jobs:
             if [[ -n "${data}" ]]; then
               args+=(--header "Content-Type: application/json" --data "${data}")
             fi
+            echo "Vault API ${method} ${path} (namespace=${namespace:-root})" >&2
             curl "${args[@]}" "${{ vars.VAULT_ADDR }}/v1/${path}"
           }
 
