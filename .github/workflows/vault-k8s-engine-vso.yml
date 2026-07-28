@@ -129,7 +129,7 @@ jobs:
             200|204) ;;
             400)
               # Vault returns 400 when the namespace already exists.
-              grep -q 'path already in use' "${RUNNER_TEMP}/vault-namespace-response.json"
+              grep -q 'already exists' "${RUNNER_TEMP}/vault-namespace-response.json"
               ;;
             *)
               cat "${RUNNER_TEMP}/vault-namespace-response.json"
