@@ -139,7 +139,7 @@ jobs:
           esac
 
           mounts=$(vault_api GET sys/mounts "${VAULT_CHILD_NAMESPACE}")
-          if ! jq -e 'keys | any(. == "secret/" or endswith("/secret/"))' \
+          if ! jq -e '.data | keys | any(. == "secret/" or endswith("/secret/"))' \
             <<<"${mounts}" >/dev/null; then
             vault_api POST sys/mounts/secret "${VAULT_CHILD_NAMESPACE}" \
               '{"type":"kv","options":{"version":"2"}}' >/dev/null
@@ -159,7 +159,7 @@ jobs:
             "${policy_payload}" >/dev/null
 
           auth_mounts=$(vault_api GET sys/auth "${VAULT_CHILD_NAMESPACE}")
-          if ! jq -e 'keys | any(. == "kubernetes/" or endswith("/kubernetes/"))' \
+          if ! jq -e '.data | keys | any(. == "kubernetes/" or endswith("/kubernetes/"))' \
             <<<"${auth_mounts}" >/dev/null; then
             vault_api POST sys/auth/kubernetes "${VAULT_CHILD_NAMESPACE}" \
               '{"type":"kubernetes"}' >/dev/null
