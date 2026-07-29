@@ -6,8 +6,14 @@ auth:
   password: "AppPassword"
   database: "app_db"
 
-# The postgres helm chart deployment will be using PVC postgresql-data-claim
+# Let EKS provision a dedicated EBS volume dynamically for this release.
 primary:
   persistence:
     enabled: true
-    existingClaim: "postgresql-data-claim"
+    storageClass: "gp3"
+    size: 10Gi
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing

@@ -74,6 +74,29 @@ resource "vault_secrets_sync_aws_destination" "local_irsa" {
   }
 }
 
+resource "vault_mount" "verification" {
+  path        = "sync-aws-irsa"
+  type        = "kv-v2"
+  description = "Independent KV source for the AWS IRSA Secrets Sync notebook."
+}
+
+resource "vault_kv_secret_v2" "verification" {
+  mount = vault_mount.verification.path
+  name  = "verification"
+
+  data_json = jsonencode({
+    scenario = "aws-irsa"
+    message  = "Managed independently by 5_Secret_Sync_AWS_IRSA.ipynb"
+  })
+}
+
+resource "vault_secrets_sync_association" "verification" {
+  name        = vault_secrets_sync_aws_destination.local_irsa.name
+  type        = vault_secrets_sync_aws_destination.local_irsa.type
+  mount       = vault_mount.verification.path
+  secret_name = vault_kv_secret_v2.verification.name
+}
+
 output "aws_account_id" {
   description = "AWS account managed by the local IRSA Secrets Sync destination."
   value       = data.aws_caller_identity.current.account_id

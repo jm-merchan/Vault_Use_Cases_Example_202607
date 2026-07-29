@@ -7,3 +7,5 @@
 *lock*
 *backup*
 .DS_Store
+.validation
+scripts

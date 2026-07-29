@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: openldap
   namespace: vault
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
   labels:
     app.kubernetes.io/name: openldap
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: tcp-ldap
       port: 389

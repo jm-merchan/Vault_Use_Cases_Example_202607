@@ -112,3 +112,26 @@ resource "vault_secrets_sync_aws_destination" "aws" {
     Managed_by = "HashiCorp Vault"
   }
 }
+
+resource "vault_mount" "verification" {
+  path        = "sync-aws-static"
+  type        = "kv-v2"
+  description = "Independent KV source for the AWS static-account Secrets Sync notebook."
+}
+
+resource "vault_kv_secret_v2" "verification" {
+  mount = vault_mount.verification.path
+  name  = "verification"
+
+  data_json = jsonencode({
+    scenario = "aws-static-account"
+    message  = "Managed independently by 5_Secret_Sync_AWS_static_account.ipynb"
+  })
+}
+
+resource "vault_secrets_sync_association" "verification" {
+  name        = vault_secrets_sync_aws_destination.aws.name
+  type        = vault_secrets_sync_aws_destination.aws.type
+  mount       = vault_mount.verification.path
+  secret_name = vault_kv_secret_v2.verification.name
+}
