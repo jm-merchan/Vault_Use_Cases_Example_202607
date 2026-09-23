@@ -1,29 +1,36 @@
-name: vault-oidc
-on:
-  workflow_dispatch:
+name: Vault RHEL9 read
+'on':
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
 jobs:
-  read-secret:
+  verify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+    env:
+      VAULT_ADDR: https://vault-vm.jose-merchan.sbx.hashidemos.io
+      ROLE: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Verify Vault on RHEL9
+      shell: bash
+      run: 'set -euo pipefail
 
-      - name: Import Vault Secrets
-        id: vault
-        uses: hashicorp/vault-action@v3
-        with:
-          url: ${{ vars.VAULT_ADDR }}
-          tlsSkipVerify: true
-          method: jwt
-          path: ${{ vars.VAULT_AUTH_PATH }}
-          role: ${{ vars.VAULT_AUTH_ROLE }}
-          secrets: |
-            secret/data/gha/demo api_key | API_KEY
+        jwt=$(curl -fsS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+        "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=vault-vm" | jq -er .value)
 
-      - name: Use Secret
-        run: |
-          test -n "${API_KEY}"
-          echo "Secret loaded successfully"
+        login=$(jq -n --arg jwt "$jwt" --arg role "$ROLE" ''{jwt:$jwt,role:$role}''
+        | curl -fsS -H ''Content-Type: application/json'' -d @- "$VAULT_ADDR/v1/auth/vm-github/login")
+
+        token=$(jq -er .auth.client_token <<<"$login")
+
+        echo "::add-mask::$token"
+
+        trap ''curl -fsS -H "X-Vault-Token: $token" -X POST "$VAULT_ADDR/v1/auth/token/revoke-self"
+        >/dev/null'' EXIT
+
+        curl -fsS -H "X-Vault-Token: $token" "$VAULT_ADDR/v1/secret/data/gha/demo"
+        | jq -e ''.data.data.api_key | length > 0'' >/dev/null
+
+        echo "VM workflow assertions passed"
+
+        '
