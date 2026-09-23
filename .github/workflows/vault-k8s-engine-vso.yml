@@ -1,428 +1,71 @@
-name: Vault Kubernetes Engine and VSO delivery
-
-on:
-  workflow_dispatch:
-    inputs:
-      secret_message:
-        description: Secret value rendered by the NGINX application
-        required: false
-        default: Delivered securely by Vault and VSO
-
-concurrency:
-  group: vault-k8s-engine-vso
-  cancel-in-progress: false
-
-env:
-  APP_NAMESPACE: gha-vso-demo
-  VAULT_CHILD_NAMESPACE: gha-demo
-  VAULT_K8S_ROLE: github-actions-deployer
-
+name: Vault RHEL9 engine
+'on':
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
 jobs:
-  deploy:
+  verify:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-
+    env:
+      VAULT_ADDR: https://vault-vm.jose-merchan.sbx.hashidemos.io
+      ROLE: engine
+      K8S_SERVER: https://6644A6BC129B47B8D55B137B76768774.gr7.eu-central-1.eks.amazonaws.com
+      K8S_CA: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURNVENDQWhtZ0F3SUJBZ0lRUzFMWmdvbVZmV3REZmRBSHhhamNlekFOQmdrcWhraUc5dzBCQVFzRkFEQW4KTVJBd0RnWURWUVFLRXdkQlYxTWdSVXRUTVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1CNFhEVEkyTURreQpNekE1TWprd01Wb1hEVE14TURreU1qQTVNamt3TVZvd0p6RVFNQTRHQTFVRUNoTUhRVmRUSUVWTFV6RVRNQkVHCkExVUVBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUIKQUxXMXcrNTRvcmRMSEZMV1diOWFveUpXcC85alBwNWZua3gxK0kxa1g3Y1lkVXpyczFaQzdYdTdWaFdPYnlQYQowaDJNcUtaRWdTWmFseHlNNHdMcVlLcUxiSmN4d3AyQ080a2E2MDJ5ZzJac2ptR1NDUmJMWDVkb3dmTGxmQ3c1CnhrbkpNT3N5MnplOElKbWpBL3JQcmZMYi9IdFhqWEttalI4WjgzMDRtWlFWN0g4Nm1rOWdyVjBMTXNFV0ttQVoKZDFkWGZqbDNHQUp4TXJ5Mys4Um1DMUR4Rno1WHZFOWhkSzdSdkxUcEdTQlNqQ0lnRHlrZCsxSDFrRHF0WlphRgpQa1pQY0k2d28rK05wcVZkZDQ5NjBmNXdpWks5aXlXdElCc3I1Y1RIVnRBbUdGM0V6RjF0TzMvU3RRak83SVhGCnEzVWNkdXd2ck40MTg4aElrSWIwdXowQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWQKRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHaHNMR0ptT3c2Wi84ckZCd1dxc0VZUnJzQlNNQlVHQTFVZApFUVFPTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRXBEWU9NV05xSk9hQ25KCnhQOGdWQmtodmgxRlhsU3I3MUdBd1FPVW81bzhjSE83cENrMHpyb05KeHpGNTdIVVdHY3IrTE96UW1LL2RoNEoKZVZGVVVXZlZFb1ZNY1VYSTk5NTVFZUxlaE5HNk9Cd2w3RFFodWVFV0wyNm54VWFhaUNFV2F3YWFNM1gzZ0xxUQpMRG8wb29zd0hkM2o1UTlJNW9BcVhWc0xPQmgyNDFKQUR6Rk9FcXhUQTM5djRZYzBEb3dKWUdGN2hFaG9ZdytWCml5TDJtWGV4MDlYdkI2ZUJYdzRaZFJROXBqbFhBeU1USHhwL2h1NWRDZmdSaVVmRm9xWjhuNTRvdkhLWjZPbFYKMHBrVFlIcU9QMlViRTYxZTVjWmd6S1BYVjIvSkVySHg1OG1IQUV3OHQ1Vy81cXlCNThlQmdtZkJ3MG83TmU2VApadk43cThjPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+      APP_NS: vm-consumers
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Authenticate to Vault with GitHub OIDC
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          oidc_response=$(curl --silent --show-error --fail \
-            --header "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=https://github.com/${GITHUB_REPOSITORY_OWNER}")
-          oidc_token=$(jq -r '.value' <<<"${oidc_response}")
-          unset oidc_response
-
-          login_response=$(jq -n \
-            --arg jwt "${oidc_token}" \
-            --arg role "${{ vars.VAULT_K8S_AUTH_ROLE }}" \
-            '{jwt: $jwt, role: $role}' |
-            curl --silent --show-error --fail \
-              --request POST \
-              --header "Content-Type: application/json" \
-              --data-binary @- \
-              "${{ vars.VAULT_ADDR }}/v1/auth/${{ vars.VAULT_AUTH_PATH }}/login")
-          unset oidc_token
-
-          vault_token=$(jq -r '.auth.client_token' <<<"${login_response}")
-          unset login_response
-          test -n "${vault_token}" && test "${vault_token}" != "null"
-          echo "::add-mask::${vault_token}"
-          echo "VAULT_TOKEN=${vault_token}" >> "${GITHUB_ENV}"
-
-      - name: Obtain short-lived Kubernetes credentials from Vault
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          credentials=$(jq -n '{kubernetes_namespace: "vault"}' |
-            curl --silent --show-error --fail \
-              --request POST \
-              --header "Content-Type: application/json" \
-              --header "X-Vault-Token: ${VAULT_TOKEN}" \
-              --data-binary @- \
-              "${{ vars.VAULT_ADDR }}/v1/kubernetes/creds/${VAULT_K8S_ROLE}")
-
-          k8s_token=$(jq -r '.data.service_account_token' <<<"${credentials}")
-          lease_id=$(jq -r '.lease_id' <<<"${credentials}")
-          unset credentials
-          test -n "${k8s_token}" && test "${k8s_token}" != "null"
-          echo "::add-mask::${k8s_token}"
-          echo "K8S_TOKEN=${k8s_token}" >> "${GITHUB_ENV}"
-          echo "VAULT_K8S_LEASE_ID=${lease_id}" >> "${GITHUB_ENV}"
-
-      - name: Configure kubectl
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          mkdir -p "${RUNNER_TEMP}/kube"
-          printf '%s' '${{ vars.EKS_CA_DATA }}' | base64 --decode > "${RUNNER_TEMP}/kube/ca.crt"
-          kubectl config set-cluster eks-vault-demo \
-            --server='${{ vars.EKS_SERVER }}' \
-            --certificate-authority="${RUNNER_TEMP}/kube/ca.crt" \
-            --embed-certs=true
-          kubectl config set-credentials vault-dynamic --token="${K8S_TOKEN}"
-          kubectl config set-context vault-dynamic \
-            --cluster=eks-vault-demo \
-            --user=vault-dynamic
-          kubectl config use-context vault-dynamic
-          kubectl auth can-i create namespaces | grep -qx yes
-
-      - name: Create the delegated Vault namespace
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          vault_api() {
-            local method=$1
-            local path=$2
-            local namespace=${3:-}
-            local data=${4:-}
-            local args=(
-              --silent --show-error --fail-with-body
-              --request "${method}"
-              --header "X-Vault-Token: ${VAULT_TOKEN}"
-            )
-            if [[ -n "${namespace}" ]]; then
-              args+=(--header "X-Vault-Namespace: ${namespace}")
-            fi
-            if [[ -n "${data}" ]]; then
-              args+=(--header "Content-Type: application/json" --data "${data}")
-            fi
-            echo "Vault API ${method} ${path} (namespace=${namespace:-root})" >&2
-            curl "${args[@]}" "${{ vars.VAULT_ADDR }}/v1/${path}"
-          }
-
-          namespace_code=$(curl --silent --show-error \
-            --output "${RUNNER_TEMP}/vault-namespace-response.json" \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header "X-Vault-Token: ${VAULT_TOKEN}" \
-            "${{ vars.VAULT_ADDR }}/v1/sys/namespaces/${VAULT_CHILD_NAMESPACE}")
-          case "${namespace_code}" in
-            200|204) ;;
-            400)
-              # Vault returns 400 when the namespace already exists.
-              grep -q 'already exists' "${RUNNER_TEMP}/vault-namespace-response.json"
-              ;;
-            *)
-              cat "${RUNNER_TEMP}/vault-namespace-response.json"
-              exit 1
-              ;;
-          esac
-
-          mounts=$(vault_api GET sys/mounts "${VAULT_CHILD_NAMESPACE}")
-          if ! jq -e '.data | keys | any(. == "secret/" or endswith("/secret/"))' \
-            <<<"${mounts}" >/dev/null; then
-            vault_api POST sys/mounts/secret "${VAULT_CHILD_NAMESPACE}" \
-              '{"type":"kv","options":{"version":"2"}}' >/dev/null
-          fi
-
-          policy=$(cat <<'HCL'
-          path "secret/data/application/*" {
-            capabilities = ["read"]
-          }
-          path "secret/metadata/application/*" {
-            capabilities = ["read", "list"]
-          }
-          HCL
-          )
-          policy_payload=$(jq -n --arg policy "${policy}" '{policy: $policy}')
-          vault_api PUT sys/policies/acl/vso-application "${VAULT_CHILD_NAMESPACE}" \
-            "${policy_payload}" >/dev/null
-
-          auth_mounts=$(vault_api GET sys/auth "${VAULT_CHILD_NAMESPACE}")
-          if ! jq -e '.data | keys | any(. == "kubernetes/" or endswith("/kubernetes/"))' \
-            <<<"${auth_mounts}" >/dev/null; then
-            vault_api POST sys/auth/kubernetes "${VAULT_CHILD_NAMESPACE}" \
-              '{"type":"kubernetes"}' >/dev/null
-          fi
-          vault_api POST auth/kubernetes/config "${VAULT_CHILD_NAMESPACE}" \
-            '{"kubernetes_host":"https://kubernetes.default.svc:443"}' >/dev/null
-
-          role_payload=$(jq -n \
-            --arg namespace "${APP_NAMESPACE}" \
-            '{
-              bound_service_account_names: ["default"],
-              bound_service_account_namespaces: [$namespace],
-              token_policies: ["vso-application"],
-              audience: "vault",
-              token_ttl: "1h"
-            }')
-          vault_api POST auth/kubernetes/role/vso-application "${VAULT_CHILD_NAMESPACE}" \
-            "${role_payload}" >/dev/null
-
-          secret_payload=$(jq -n \
-            --arg message "${{ inputs.secret_message }}" \
-            --arg environment "${GITHUB_REPOSITORY}@${GITHUB_SHA::7}" \
-            '{data: {message: $message, environment: $environment}}')
-          vault_api POST secret/data/application/ui "${VAULT_CHILD_NAMESPACE}" \
-            "${secret_payload}" >/dev/null
-
-      - name: Deploy VSO resources and the NGINX application
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          kubectl create namespace "${APP_NAMESPACE}" \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-          cat <<EOF | kubectl apply -f -
-          apiVersion: secrets.hashicorp.com/v1beta1
-          kind: VaultConnection
-          metadata:
-            name: vault
-            namespace: ${APP_NAMESPACE}
-          spec:
-            address: ${{ vars.VAULT_ADDR }}
-            skipTLSVerify: true
-          ---
-          apiVersion: secrets.hashicorp.com/v1beta1
-          kind: VaultAuth
-          metadata:
-            name: application
-            namespace: ${APP_NAMESPACE}
-          spec:
-            vaultConnectionRef: vault
-            namespace: ${VAULT_CHILD_NAMESPACE}
-            method: kubernetes
-            mount: kubernetes
-            kubernetes:
-              role: vso-application
-              serviceAccount: default
-              audiences:
-                - vault
-          ---
-          apiVersion: secrets.hashicorp.com/v1beta1
-          kind: VaultStaticSecret
-          metadata:
-            name: application
-            namespace: ${APP_NAMESPACE}
-          spec:
-            vaultAuthRef: application
-            namespace: ${VAULT_CHILD_NAMESPACE}
-            type: kv-v2
-            mount: secret
-            path: application/ui
-            refreshAfter: 30s
-            destination:
-              create: true
-              overwrite: true
-              name: application-secret
-              transformation:
-                excludeRaw: true
-            rolloutRestartTargets:
-              - kind: Deployment
-                name: secret-ui
-          ---
-          apiVersion: v1
-          kind: ConfigMap
-          metadata:
-            name: secret-ui-template
-            namespace: ${APP_NAMESPACE}
-          data:
-            render.py: |
-              import html
-              import os
-              from pathlib import Path
-
-              message = html.escape(os.environ["SECRET_MESSAGE"])
-              environment = html.escape(os.environ["SECRET_ENVIRONMENT"])
-              page = f"""<!doctype html>
-              <html lang="en">
-              <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width,initial-scale=1">
-                <title>Vault Secret Delivery</title>
-                <style>
-                  *{{box-sizing:border-box}} body{{margin:0;min-height:100vh;display:grid;place-items:center;
-                  font-family:Inter,ui-sans-serif,system-ui;background:radial-gradient(circle at top,#263a74,#080b18 58%);
-                  color:#eef2ff}} .card{{width:min(720px,92vw);padding:42px;border:1px solid #ffffff24;
-                  border-radius:28px;background:#11162dcc;box-shadow:0 30px 90px #0008;backdrop-filter:blur(18px)}}
-                  .badge{{display:inline-flex;gap:9px;align-items:center;padding:8px 13px;border-radius:999px;
-                  background:#54e6a51c;color:#71f6bb;font-weight:700;font-size:13px}} .dot{{width:8px;height:8px;
-                  border-radius:50%;background:#62f2b5;box-shadow:0 0 16px #62f2b5}} h1{{font-size:clamp(32px,6vw,58px);
-                  letter-spacing:-.045em;margin:24px 0 10px}} .lead{{color:#aeb8d8;font-size:18px;margin:0 0 30px}}
-                  .secret{{padding:24px;border-radius:18px;background:#090d1d;border:1px solid #6f82ff42}}
-                  .label{{font-size:12px;text-transform:uppercase;letter-spacing:.16em;color:#7f8db7}}
-                  .value{{font-size:24px;font-weight:750;margin-top:10px;overflow-wrap:anywhere;color:#fff}}
-                  footer{{display:flex;justify-content:space-between;gap:20px;margin-top:24px;color:#7783a9;font-size:13px}}
-                </style>
-              </head>
-              <body><main class="card"><div class="badge"><span class="dot"></span>Live sync healthy</div>
-              <h1>Secret delivered.</h1><p class="lead">GitHub OIDC → Vault → Kubernetes → VSO → NGINX</p>
-              <section class="secret"><div class="label">Value from Vault</div><div class="value">{message}</div></section>
-              <footer><span>{environment}</span><span>Auto-reload enabled</span></footer></main></body></html>"""
-              Path("/site/index.html").write_text(page)
-          ---
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: secret-ui
-            namespace: ${APP_NAMESPACE}
-          spec:
-            replicas: 2
-            selector:
-              matchLabels:
-                app: secret-ui
-            template:
-              metadata:
-                labels:
-                  app: secret-ui
-              spec:
-                initContainers:
-                  - name: render-secret
-                    image: python:3.13-alpine
-                    command: ["python", "/template/render.py"]
-                    env:
-                      - name: SECRET_MESSAGE
-                        valueFrom:
-                          secretKeyRef:
-                            name: application-secret
-                            key: message
-                      - name: SECRET_ENVIRONMENT
-                        valueFrom:
-                          secretKeyRef:
-                            name: application-secret
-                            key: environment
-                    volumeMounts:
-                      - name: template
-                        mountPath: /template
-                      - name: site
-                        mountPath: /site
-                containers:
-                  - name: nginx
-                    image: nginx:1.29-alpine
-                    ports:
-                      - name: http
-                        containerPort: 80
-                    readinessProbe:
-                      httpGet:
-                        path: /
-                        port: http
-                    resources:
-                      requests:
-                        cpu: 20m
-                        memory: 32Mi
-                      limits:
-                        cpu: 200m
-                        memory: 128Mi
-                    volumeMounts:
-                      - name: site
-                        mountPath: /usr/share/nginx/html
-                volumes:
-                  - name: template
-                    configMap:
-                      name: secret-ui-template
-                  - name: site
-                    emptyDir: {}
-          ---
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: secret-ui
-            namespace: ${APP_NAMESPACE}
-            annotations:
-              service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-              # Required by the EKS in-tree service controller to provision an NLB.
-              service.beta.kubernetes.io/aws-load-balancer-type: nlb
-          spec:
-            type: LoadBalancer
-            selector:
-              app: secret-ui
-            ports:
-              - name: http
-                port: 80
-                targetPort: http
-          EOF
-
-      - name: Validate synchronization, reload and public endpoint
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          for attempt in $(seq 1 60); do
-            synced=$(kubectl -n "${APP_NAMESPACE}" get vaultstaticsecret application \
-              -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || true)
-            [[ "${synced}" == "True" ]] && break
-            [[ "${attempt}" == "60" ]] && {
-              kubectl -n "${APP_NAMESPACE}" describe vaultstaticsecret application
-              exit 1
-            }
-            sleep 5
-          done
-
-          kubectl -n "${APP_NAMESPACE}" rollout status deployment/secret-ui --timeout=5m
-          kubectl -n "${APP_NAMESPACE}" get vaultconnection,vaultauth,vaultstaticsecret,pods,service
-
-          for attempt in $(seq 1 60); do
-            endpoint=$(kubectl -n "${APP_NAMESPACE}" get service secret-ui \
-              -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)
-            [[ -n "${endpoint}" ]] && break
-            [[ "${attempt}" == "60" ]] && exit 1
-            sleep 10
-          done
-          echo "Application URL: http://${endpoint}"
-
-          # Kubernetes publishes the hostname before an AWS NLB necessarily has
-          # healthy targets or a resolvable DNS record. Do not report success
-          # until the application is reachable through the public listener.
-          for attempt in $(seq 1 60); do
-            http_code=$(curl --silent --show-error \
-              --output "${RUNNER_TEMP}/secret-ui.html" \
-              --write-out '%{http_code}' \
-              --connect-timeout 5 \
-              --max-time 10 \
-              "http://${endpoint}/" 2>/dev/null || true)
-            if [[ "${http_code}" == "200" ]] &&
-              grep -q 'Secret delivered.' "${RUNNER_TEMP}/secret-ui.html"; then
-              break
-            fi
-            [[ "${attempt}" == "60" ]] && {
-              echo "NLB did not become reachable: http=${http_code:-000}" >&2
-              exit 1
-            }
-            sleep 5
-          done
-          echo "Public NLB validation returned HTTP 200."
-
-      - name: Revoke the dynamic Kubernetes credential
-        if: always()
-        shell: bash
-        run: |
-          if [[ -n "${VAULT_TOKEN:-}" && -n "${VAULT_K8S_LEASE_ID:-}" ]]; then
-            jq -n --arg lease_id "${VAULT_K8S_LEASE_ID}" '{lease_id: $lease_id}' |
-              curl --silent --show-error \
-                --request PUT \
-                --header "Content-Type: application/json" \
-                --header "X-Vault-Token: ${VAULT_TOKEN}" \
-                --data-binary @- \
-                "${{ vars.VAULT_ADDR }}/v1/sys/leases/revoke" >/dev/null || true
-          fi
+    - name: Verify Vault on RHEL9
+      shell: bash
+      run: "set -euo pipefail\njwt=$(curl -fsS -H \"Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}\"\
+        \ \"${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=vault-vm\" | jq -er .value)\n\
+        login=$(jq -n --arg jwt \"$jwt\" --arg role \"$ROLE\" '{jwt:$jwt,role:$role}'\
+        \ | curl -fsS -H 'Content-Type: application/json' -d @- \"$VAULT_ADDR/v1/auth/vm-github/login\"\
+        )\ntoken=$(jq -er .auth.client_token <<<\"$login\")\necho \"::add-mask::$token\"\
+        \ntrap 'curl -fsS -H \"X-Vault-Token: $token\" -X POST \"$VAULT_ADDR/v1/auth/token/revoke-self\"\
+        \ >/dev/null' EXIT\ncurl -fsS -H \"X-Vault-Token: $token\" \"$VAULT_ADDR/v1/secret/data/gha/demo\"\
+        \ | jq -e '.data.data.api_key | length > 0' >/dev/null\n\nstatus=$(curl -sS\
+        \ -o /dev/null -w '%{http_code}' -H \"X-Vault-Token: $token\" \"$VAULT_ADDR/v1/sys/namespaces/vm-gha\"\
+        )\nif [[ \"$status\" == 404 ]]; then curl -fsS -H \"X-Vault-Token: $token\"\
+        \ -X POST \"$VAULT_ADDR/v1/sys/namespaces/vm-gha\" >/dev/null; elif [[ \"\
+        $status\" != 200 ]]; then exit 1; fi\nstatus=$(curl -sS -o /dev/null -w '%{http_code}'\
+        \ -H \"X-Vault-Token: $token\" -H 'X-Vault-Namespace: vm-gha' \"$VAULT_ADDR/v1/sys/mounts/secret\"\
+        )\nif [[ \"$status\" == 400 || \"$status\" == 404 ]]; then\n printf '%s' '{\"\
+        type\":\"kv\",\"options\":{\"version\":\"2\"}}' | curl -fsS -H \"X-Vault-Token:\
+        \ $token\" -H 'X-Vault-Namespace: vm-gha' -H 'Content-Type: application/json'\
+        \ -d @- \"$VAULT_ADDR/v1/sys/mounts/secret\" >/dev/null\nelif [[ \"$status\"\
+        \ != 200 ]]; then exit 1; fi\njq -n --arg marker \"github-${GITHUB_RUN_ID}\"\
+        \ '{data:{value:$marker}}' | curl -fsS -H \"X-Vault-Token: $token\" -H 'X-Vault-Namespace:\
+        \ vm-gha' -H 'Content-Type: application/json' -d @- \"$VAULT_ADDR/v1/secret/data/application/ui\"\
+        \ >/dev/null\ncreds=$(curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type:\
+        \ application/json' -d \"{\\\"kubernetes_namespace\\\":\\\"${APP_NS}\\\"}\"\
+        \ \"$VAULT_ADDR/v1/kubernetes/creds/github\")\nk8s_token=$(jq -er .data.service_account_token\
+        \ <<<\"$creds\")\necho \"::add-mask::$k8s_token\"\nprintf '%s' \"$K8S_CA\"\
+        \ | base64 -d > \"$RUNNER_TEMP/ca.pem\"\nexport KUBECONFIG=\"$RUNNER_TEMP/kubeconfig\"\
+        \nkubectl config set-cluster vm-demo --server=\"$K8S_SERVER\" --certificate-authority=\"\
+        $RUNNER_TEMP/ca.pem\" --embed-certs=true >/dev/null\nkubectl config set-credentials\
+        \ dynamic --token=\"$k8s_token\" >/dev/null\nkubectl config set-context vm-demo\
+        \ --cluster=vm-demo --user=dynamic --namespace=\"$APP_NS\" >/dev/null\nkubectl\
+        \ config use-context vm-demo >/dev/null\nkubectl auth can-i create configmaps\
+        \ | grep -qx yes\nkubectl create configmap vm-gha-evidence --from-literal=run_id=\"\
+        $GITHUB_RUN_ID\" --dry-run=client -o yaml | kubectl apply -f - >/dev/null\n\
+        jq -n --arg marker \"github-${GITHUB_RUN_ID}\" '{data:{value:$marker}}' |\
+        \ curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type: application/json'\
+        \ -d @- \"$VAULT_ADDR/v1/secret/data/vm/static\" >/dev/null\ncat <<EOF | kubectl\
+        \ apply -f - >/dev/null\napiVersion: secrets.hashicorp.com/v1beta1\nkind:\
+        \ VaultStaticSecret\nmetadata:\n  name: vm-gha-delivery\n  namespace: ${APP_NS}\n\
+        spec:\n  vaultAuthRef: vm-vault\n  namespace: vm-gha\n  type: kv-v2\n  mount:\
+        \ secret\n  path: application/ui\n  refreshAfter: 10s\n  destination:\n  \
+        \  create: true\n    name: vm-gha-delivery\n  rolloutRestartTargets:\n   \
+        \ - kind: Deployment\n      name: vm-gha-app\n---\napiVersion: apps/v1\nkind:\
+        \ Deployment\nmetadata:\n  name: vm-gha-app\n  namespace: ${APP_NS}\nspec:\n\
+        \  replicas: 1\n  selector:\n    matchLabels: {app: vm-gha-app}\n  template:\n\
+        \    metadata:\n      labels: {app: vm-gha-app}\n    spec:\n      containers:\n\
+        \        - name: app\n          image: busybox:1.37.0\n          command:\
+        \ [sh, -c, 'sleep 86400']\n          readinessProbe:\n            exec:\n\
+        \              command: [sh, -c, 'test -s /vault/value']\n          volumeMounts:\n\
+        \            - {name: secret, mountPath: /vault, readOnly: true}\n      volumes:\n\
+        \        - name: secret\n          secret: {secretName: vm-gha-delivery}\n\
+        EOF\nkubectl rollout status deployment/vm-gha-app --timeout=300s\njq '{lease_id:.lease_id}'\
+        \ <<<\"$creds\" | curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type:\
+        \ application/json' -d @- \"$VAULT_ADDR/v1/sys/leases/revoke\" >/dev/null\n\
+        echo \"VM workflow assertions passed\"\n"
