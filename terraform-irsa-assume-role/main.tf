@@ -7,10 +7,12 @@ data "aws_iam_role" "vault_irsa" {
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "assume_role_trust" {
+  # EKS Pod Identity tags the Vault session. Role chaining forwards those tags,
+  # so the target role must allow sts:TagSession as well as sts:AssumeRole.
   statement {
     sid     = "TrustVaultIrsaRole"
     effect  = "Allow"
-    actions = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRole", "sts:TagSession"]
 
     principals {
       type        = "AWS"
@@ -44,7 +46,7 @@ data "aws_iam_policy_document" "secrets_manager" {
       "secretsmanager:UpdateSecret",
     ]
     resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:${var.secret_name_prefix}*",
+      "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:vault/*",
     ]
   }
 }
@@ -65,7 +67,7 @@ resource "aws_iam_role_policy" "vault_irsa_assume_role" {
       {
         Sid      = "AssumeSecretsSyncRole"
         Effect   = "Allow"
-        Action   = "sts:AssumeRole"
+        Action   = ["sts:AssumeRole", "sts:TagSession"]
         Resource = aws_iam_role.secrets_sync.arn
       },
     ]
@@ -101,11 +103,12 @@ resource "vault_kv_secret_v2" "verification" {
 }
 
 resource "vault_secrets_sync_aws_destination" "irsa_assume_role" {
-  name     = var.destination_name
-  region   = data.aws_region.current.region
-  role_arn = aws_iam_role.secrets_sync.arn
+  name        = var.destination_name
+  region      = data.aws_region.current.region
+  role_arn    = aws_iam_role.secrets_sync.arn
+  granularity = "secret-path"
 
-  secret_name_template = "${var.secret_name_prefix}{{ .SecretBaseName | lowercase }}"
+  secret_name_template = "vault/{{ .MountPath }}/{{ .SecretPath }}"
 
   custom_tags = {
     ManagedBy = "HashiCorpVault"

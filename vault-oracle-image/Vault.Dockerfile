@@ -1,4 +1,4 @@
-FROM docker.io/hashicorp/vault-enterprise:2.0.3-ent AS vault
+FROM docker.io/hashicorp/vault-enterprise:2.1.1-ent AS vault
 FROM docker.io/josemerchan/vault-oracle-init:0.14.1-ent-ic23.26.3 AS oracle
 
 FROM docker.io/oraclelinux:8-slim

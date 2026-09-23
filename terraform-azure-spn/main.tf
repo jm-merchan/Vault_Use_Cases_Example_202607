@@ -12,7 +12,7 @@ locals {
   destination_name     = "${var.name_prefix}-azure-kv"
   key_vault_name       = "kv-${var.name_prefix}-${random_string.suffix.result}"
   kv_mount_path        = "${var.name_prefix}-kv"
-  secret_name_template = "vault-${var.name_prefix}-{{ .SecretBaseName }}"
+  secret_name_template = "vault-{{ .MountPath | replace \"/\" \"-\" | replace \"_\" \"-\" | lowercase }}-{{ .SecretPath | replace \"/\" \"-\" | replace \"_\" \"-\" | lowercase }}"
 
   common_tags = {
     ManagedBy = "Terraform"

@@ -36,6 +36,13 @@ variable "secret_name" {
   }
 }
 
+variable "vault_pod_role_name" {
+  description = "IAM role assumed by the Vault pod through EKS Pod Identity. Its session tags are forwarded when Secrets Sync calls AssumeRoleWithWebIdentity."
+  type        = string
+  default     = "vault-kms-auto-unseal"
+  nullable    = false
+}
+
 variable "tenant_id" {
   description = "Tenant identifier used to isolate the WIF, Vault, IAM, and Secrets Manager resources."
   type        = string

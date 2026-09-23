@@ -10,7 +10,7 @@ output "destination_name" {
 
 output "external_secret_name" {
   description = "Expected name of the synchronized AWS Secrets Manager secret."
-  value       = "${var.secret_name_prefix}${vault_kv_secret_v2.verification.name}"
+  value       = "vault/${vault_mount.verification.path}/${vault_kv_secret_v2.verification.name}"
 }
 
 output "sync_role_arn" {

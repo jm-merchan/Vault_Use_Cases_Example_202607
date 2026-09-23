@@ -17,12 +17,13 @@ injector:
 logLevel: trace
 
 server:
+  # KMS auto-unseal uses an EKS Pod Identity association on this service
+  # account. Do not add eks.amazonaws.com/role-arn: that annotation injects
+  # AWS_WEB_IDENTITY_TOKEN_FILE, and Vault 2.1.1 then uses the IRSA token
+  # instead of the Secrets Sync identity token.
   serviceAccount:
     create: true
     name: vault
-    annotations:
-      eks.amazonaws.com/role-arn: ${VAULT_IRSA_ROLE_ARN}
-      eks.amazonaws.com/sts-regional-endpoints: "true"
 
   service:
     type: LoadBalancer

@@ -62,7 +62,7 @@ resource "aws_iam_policy" "secret_sync" {
           "secretsmanager:TagResource",
           "secretsmanager:UpdateSecret",
         ]
-        Resource = "arn:aws:secretsmanager:${data.aws_region.current.region}:*:secret:vault_sync_*"
+        Resource = "arn:aws:secretsmanager:${data.aws_region.current.region}:*:secret:vault/*"
       },
     ]
   })
@@ -106,7 +106,7 @@ resource "vault_secrets_sync_aws_destination" "aws" {
   access_key_id        = var.aws_access_key_id
   secret_access_key    = var.aws_secret_access_key
   region               = data.aws_region.current.region
-  secret_name_template = "vault_sync_{{ .SecretBaseName | lowercase }}"
+  secret_name_template = "vault/{{ .MountPath }}/{{ .SecretPath }}"
 
   custom_tags = {
     Managed_by = "HashiCorp Vault"

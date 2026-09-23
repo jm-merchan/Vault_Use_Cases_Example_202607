@@ -5,12 +5,12 @@ output "aws_account_id" {
 
 output "destination_name" {
   description = "Name of the Vault AWS Secrets Manager WIF destination."
-  value       = vault_secrets_sync_aws_destination.this.name
+  value       = local.destination_name
 }
 
 output "expected_aws_secret_name" {
   description = "Expected AWS Secrets Manager name produced by the destination template."
-  value       = replace(local.secret_name_template, "{{ .SecretBaseName }}", var.secret_name)
+  value       = "vault/${local.kv_mount_path}/${var.secret_name}"
 }
 
 output "expected_token_subject" {

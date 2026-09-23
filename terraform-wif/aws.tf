@@ -4,6 +4,10 @@ provider "aws" {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_role" "vault_pod" {
+  name = var.vault_pod_role_name
+}
+
 data "tls_certificate" "issuer" {
   url          = var.public_oidc_issuer_url
   verify_chain = false
@@ -17,8 +21,8 @@ locals {
   name_prefix          = "${var.tenant_id}-secrets-sync"
   destination_name     = "${var.tenant_id}-aws-sm"
   kv_mount_path        = "${var.tenant_id}-kv"
-  secret_name_template = "vault-${var.tenant_id}-{{ .SecretBaseName }}"
-  secret_prefix        = "vault-${var.tenant_id}-"
+  secret_name_template = "vault/{{ .MountPath }}/{{ .SecretPath }}"
+  secret_prefix        = "vault/"
 
   namespace_segment = data.vault_namespace.current.id == "/" ? "root" : trimsuffix(data.vault_namespace.current.id, "/")
   expected_subject  = "secrets-sync:${local.namespace_segment}:aws-sm:${local.destination_name}"
@@ -27,6 +31,13 @@ locals {
     managed-by = "terraform-vault-secrets-sync-wif"
     tenant     = var.tenant_id
   }
+
+  # AWS and Azure share this signing key. Keep every audience already stored on it.
+  oidc_key_name = "${local.name_prefix}-key"
+  oidc_allowed_client_ids = sort(distinct(concat(
+    [local.aws_audience],
+    jsondecode(data.external.existing_oidc_clients.result.allowed_client_ids),
+  )))
 }
 
 resource "aws_iam_openid_connect_provider" "vault_secrets_sync" {
@@ -40,21 +51,37 @@ resource "aws_iam_openid_connect_provider" "vault_secrets_sync" {
 resource "aws_iam_role" "secrets_sync" {
   name = "${local.name_prefix}-role"
 
+  # EKS Pod Identity tags the Vault session. The AWS SDK signs
+  # AssumeRoleWithWebIdentity with those credentials and forwards the tags,
+  # so this role must allow sts:TagSession from the pod role as well as
+  # sts:AssumeRoleWithWebIdentity from the Vault OIDC provider.
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowVaultOidc"
         Effect = "Allow"
         Principal = {
           Federated = aws_iam_openid_connect_provider.vault_secrets_sync.arn
         }
-        Action = "sts:AssumeRoleWithWebIdentity"
+        Action = [
+          "sts:AssumeRoleWithWebIdentity",
+          "sts:TagSession",
+        ]
         Condition = {
           StringEquals = {
             "${local.oidc_issuer_no_scheme}:aud" = local.aws_audience
             "${local.oidc_issuer_no_scheme}:sub" = local.expected_subject
           }
         }
+      },
+      {
+        Sid    = "AllowPodIdentitySessionTags"
+        Effect = "Allow"
+        Principal = {
+          AWS = data.aws_iam_role.vault_pod.arn
+        }
+        Action = "sts:TagSession"
       },
     ]
   })
@@ -86,6 +113,23 @@ resource "aws_iam_role_policy" "secrets_sync" {
   })
 }
 
+resource "aws_iam_role_policy" "vault_pod_tag_session" {
+  name = "${local.name_prefix}-tag-session"
+  role = data.aws_iam_role.vault_pod.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "TagSecretsSyncSession"
+        Effect   = "Allow"
+        Action   = "sts:TagSession"
+        Resource = aws_iam_role.secrets_sync.arn
+      },
+    ]
+  })
+}
+
 resource "time_sleep" "wait_for_iam" {
   create_duration = "30s"
 
@@ -93,5 +137,6 @@ resource "time_sleep" "wait_for_iam" {
     aws_iam_openid_connect_provider.vault_secrets_sync,
     aws_iam_role.secrets_sync,
     aws_iam_role_policy.secrets_sync,
+    aws_iam_role_policy.vault_pod_tag_session,
   ]
 }

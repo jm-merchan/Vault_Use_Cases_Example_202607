@@ -14,7 +14,7 @@ locals {
   destination_name     = "${var.name_prefix}-azure-kv"
   key_vault_name       = "kv-${var.name_prefix}-${random_string.suffix.result}"
   kv_mount_path        = "${var.name_prefix}-kv"
-  secret_name_template = "vault-${var.name_prefix}-{{ .SecretBaseName }}"
+  secret_name_template = "vault-{{ .MountPath | replace \"/\" \"-\" | replace \"_\" \"-\" | lowercase }}-{{ .SecretPath | replace \"/\" \"-\" | replace \"_\" \"-\" | lowercase }}"
 
   oidc_base_url = data.vault_namespace.current.id == "/" ? "${vault_identity_oidc.issuer.issuer}/v1/identity/oidc/secrets-sync" : "${vault_identity_oidc.issuer.issuer}/v1/${data.vault_namespace.current.id}identity/oidc/secrets-sync"
 
@@ -24,6 +24,21 @@ locals {
   common_tags = {
     ManagedBy = "Terraform"
     Purpose   = "VaultSecretsSyncWIF"
+  }
+
+  # AWS and Azure share this signing key. Keep every audience already stored on it.
+  oidc_key_name = "${var.name_prefix}-secrets-sync-key"
+  oidc_allowed_client_ids = sort(distinct(concat(
+    [var.azure_audience],
+    jsondecode(data.external.existing_oidc_clients.result.allowed_client_ids),
+  )))
+}
+
+data "external" "existing_oidc_clients" {
+  program = ["python3", "${path.module}/../scripts/read_oidc_key_clients.py"]
+
+  query = {
+    key_name = local.oidc_key_name
   }
 }
 
@@ -55,14 +70,22 @@ resource "azuread_service_principal" "secrets_sync" {
 
 resource "vault_identity_oidc" "issuer" {
   issuer = var.public_oidc_issuer_url
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "vault_identity_oidc_key" "secrets_sync" {
-  name               = "${var.name_prefix}-secrets-sync-key"
+  name               = local.oidc_key_name
   algorithm          = "RS256"
   rotation_period    = 60 * 60 * 24
   verification_ttl   = 60 * 60 * 24
-  allowed_client_ids = [var.azure_audience]
+  allowed_client_ids = local.oidc_allowed_client_ids
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "vault_identity_oidc_role" "publish_key" {

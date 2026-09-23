@@ -10,7 +10,11 @@ output "expected_subject" {
 
 output "external_secret_name" {
   description = "Expected Azure Key Vault secret name."
-  value       = replace(local.secret_name_template, "{{ .SecretBaseName }}", var.secret_name)
+  value = format(
+    "vault-%s-%s",
+    replace(replace(lower(local.kv_mount_path), "/", "-"), "_", "-"),
+    replace(replace(lower(var.secret_name), "/", "-"), "_", "-"),
+  )
 }
 
 output "federated_application_client_id" {

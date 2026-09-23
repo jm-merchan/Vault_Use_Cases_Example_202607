@@ -10,12 +10,6 @@ variable "destination_name" {
   default     = "aws-sm-irsa-assume-role"
 }
 
-variable "secret_name_prefix" {
-  description = "Prefix restricting the Secrets Manager resources managed by the assumed role."
-  type        = string
-  default     = "vault_irsa_role_"
-}
-
 variable "sync_role_name" {
   description = "Name of the IAM role assumed by Vault Secrets Sync."
   type        = string

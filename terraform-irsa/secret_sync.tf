@@ -54,7 +54,7 @@ resource "aws_iam_role_policy" "vault_secrets_sync" {
           "secretsmanager:TagResource",
           "secretsmanager:UpdateSecret",
         ]
-        Resource = "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:vault_sync_*"
+        Resource = "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:vault/*"
       },
     ]
   })
@@ -67,7 +67,7 @@ resource "vault_secrets_sync_aws_destination" "local_irsa" {
 
   name                 = "aws-sm-irsa-local"
   region               = data.aws_region.current.region
-  secret_name_template = "vault_sync_{{ .SecretBaseName | lowercase }}"
+  secret_name_template = "vault/{{ .MountPath }}/{{ .SecretPath }}"
 
   custom_tags = {
     Managed_by = "HashiCorp Vault"

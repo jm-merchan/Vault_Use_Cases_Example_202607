@@ -1,5 +1,6 @@
+ARG VAULT_IMAGE=docker.io/josemerchan/vault-oracle-init:vault2.1.1-ent-oracle0.14.1-ic23.26.3
 FROM docker.io/josemerchan/vault-oracle-init:0.14.1-ent-ic19.26 AS oracle19
-FROM docker.io/josemerchan/vault-oracle-init:vault2.0.3-ent-oracle0.14.1-ic23.26.3@sha256:a808e7b99335f24b8e49855a46da7482f4054d791fb5d254787b35a405e59b55
+FROM ${VAULT_IMAGE}
 
 LABEL org.opencontainers.image.title="Vault Enterprise with Oracle Instant Client 19 and 23" \
       org.opencontainers.image.description="Oracle plugin runtime for Oracle Database 19c and Oracle Database Free/23ai"
