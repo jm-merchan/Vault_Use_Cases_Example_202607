@@ -1,0 +1,57 @@
+#!/bin/bash
+set -euo pipefail
+umask 027
+. /etc/os-release
+[[ "$ID" == rhel && "$VERSION_ID" == 9.* ]]
+dnf install -y curl unzip jq openssl libaio logrotate java-21-openjdk-headless policycoreutils-python-utils
+id vault >/dev/null 2>&1 || useradd --system --home-dir /var/lib/vault --shell /sbin/nologin vault
+install -d -o vault -g vault -m 0750 /var/lib/vault /var/log/vault /etc/vault.d /etc/vault.d/tls /opt/vault/plugins
+cd /var/tmp
+curl -fsSLO 'https://releases.hashicorp.com/vault/${vault_version}/vault_${vault_version}_linux_amd64.zip'
+curl -fsSLO 'https://releases.hashicorp.com/vault/${vault_version}/vault_${vault_version}_SHA256SUMS'
+grep 'vault_${vault_version}_linux_amd64.zip$' 'vault_${vault_version}_SHA256SUMS' | sha256sum -c -
+unzip -o 'vault_${vault_version}_linux_amd64.zip' -d /usr/local/bin
+chmod 0755 /usr/local/bin/vault
+restorecon -v /usr/local/bin/vault
+# SELinux remains enforcing; the service does not need to disable SELinux.
+cat > /etc/systemd/system/vault.service <<'UNIT'
+[Unit]
+Description=HashiCorp Vault on RHEL 9
+Wants=network-online.target
+After=network-online.target
+[Service]
+User=vault
+Group=vault
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/vault /var/log/vault
+Environment=VAULT_LICENSE_PATH=/etc/vault.d/vault.hclic
+[Install]
+WantedBy=multi-user.target
+UNIT
+cat > /etc/logrotate.d/vault <<'ROTATE'
+/var/log/vault/audit.json {
+  daily
+  rotate 7
+  missingok
+  notifempty
+  compress
+  delaycompress
+  create 0640 vault vault
+  sharedscripts
+  postrotate
+    /usr/bin/systemctl kill -s HUP --kill-who=main vault.service
+  endscript
+}
+ROTATE
+systemctl daemon-reload
+# No token or license in user_data; bootstrap sends them over SSH stdin.
+touch /var/lib/vault/rhel9-ready

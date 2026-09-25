@@ -1,0 +1,71 @@
+name: Vault RHEL9 engine
+'on':
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      VAULT_ADDR: https://vault-vm-apps.jose-merchan.sbx.hashidemos.io
+      ROLE: engine
+      K8S_SERVER: https://6644A6BC129B47B8D55B137B76768774.gr7.eu-central-1.eks.amazonaws.com
+      K8S_CA: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURNVENDQWhtZ0F3SUJBZ0lRUzFMWmdvbVZmV3REZmRBSHhhamNlekFOQmdrcWhraUc5dzBCQVFzRkFEQW4KTVJBd0RnWURWUVFLRXdkQlYxTWdSVXRUTVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1CNFhEVEkyTURreQpNekE1TWprd01Wb1hEVE14TURreU1qQTVNamt3TVZvd0p6RVFNQTRHQTFVRUNoTUhRVmRUSUVWTFV6RVRNQkVHCkExVUVBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUIKQUxXMXcrNTRvcmRMSEZMV1diOWFveUpXcC85alBwNWZua3gxK0kxa1g3Y1lkVXpyczFaQzdYdTdWaFdPYnlQYQowaDJNcUtaRWdTWmFseHlNNHdMcVlLcUxiSmN4d3AyQ080a2E2MDJ5ZzJac2ptR1NDUmJMWDVkb3dmTGxmQ3c1CnhrbkpNT3N5MnplOElKbWpBL3JQcmZMYi9IdFhqWEttalI4WjgzMDRtWlFWN0g4Nm1rOWdyVjBMTXNFV0ttQVoKZDFkWGZqbDNHQUp4TXJ5Mys4Um1DMUR4Rno1WHZFOWhkSzdSdkxUcEdTQlNqQ0lnRHlrZCsxSDFrRHF0WlphRgpQa1pQY0k2d28rK05wcVZkZDQ5NjBmNXdpWks5aXlXdElCc3I1Y1RIVnRBbUdGM0V6RjF0TzMvU3RRak83SVhGCnEzVWNkdXd2ck40MTg4aElrSWIwdXowQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWQKRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHaHNMR0ptT3c2Wi84ckZCd1dxc0VZUnJzQlNNQlVHQTFVZApFUVFPTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBRXBEWU9NV05xSk9hQ25KCnhQOGdWQmtodmgxRlhsU3I3MUdBd1FPVW81bzhjSE83cENrMHpyb05KeHpGNTdIVVdHY3IrTE96UW1LL2RoNEoKZVZGVVVXZlZFb1ZNY1VYSTk5NTVFZUxlaE5HNk9Cd2w3RFFodWVFV0wyNm54VWFhaUNFV2F3YWFNM1gzZ0xxUQpMRG8wb29zd0hkM2o1UTlJNW9BcVhWc0xPQmgyNDFKQUR6Rk9FcXhUQTM5djRZYzBEb3dKWUdGN2hFaG9ZdytWCml5TDJtWGV4MDlYdkI2ZUJYdzRaZFJROXBqbFhBeU1USHhwL2h1NWRDZmdSaVVmRm9xWjhuNTRvdkhLWjZPbFYKMHBrVFlIcU9QMlViRTYxZTVjWmd6S1BYVjIvSkVySHg1OG1IQUV3OHQ1Vy81cXlCNThlQmdtZkJ3MG83TmU2VApadk43cThjPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+      APP_NS: vm-consumers
+    steps:
+    - name: Verify Vault on RHEL9
+      shell: bash
+      run: "set -euo pipefail\njwt=$(curl -fsS -H \"Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}\"\
+        \ \"${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=vault-vm\" | jq -er .value)\n\
+        login=$(jq -n --arg jwt \"$jwt\" --arg role \"$ROLE\" '{jwt:$jwt,role:$role}'\
+        \ | curl -fsS -H 'Content-Type: application/json' -d @- \"$VAULT_ADDR/v1/auth/vm-github/login\"\
+        )\ntoken=$(jq -er .auth.client_token <<<\"$login\")\necho \"::add-mask::$token\"\
+        \ntrap 'curl -fsS -H \"X-Vault-Token: $token\" -X POST \"$VAULT_ADDR/v1/auth/token/revoke-self\"\
+        \ >/dev/null' EXIT\ncurl -fsS -H \"X-Vault-Token: $token\" \"$VAULT_ADDR/v1/secret/data/gha/demo\"\
+        \ | jq -e '.data.data.api_key | length > 0' >/dev/null\n\nstatus=$(curl -sS\
+        \ -o /dev/null -w '%{http_code}' -H \"X-Vault-Token: $token\" \"$VAULT_ADDR/v1/sys/namespaces/vm-gha\"\
+        )\nif [[ \"$status\" == 404 ]]; then curl -fsS -H \"X-Vault-Token: $token\"\
+        \ -X POST \"$VAULT_ADDR/v1/sys/namespaces/vm-gha\" >/dev/null; elif [[ \"\
+        $status\" != 200 ]]; then exit 1; fi\nstatus=$(curl -sS -o /dev/null -w '%{http_code}'\
+        \ -H \"X-Vault-Token: $token\" -H 'X-Vault-Namespace: vm-gha' \"$VAULT_ADDR/v1/sys/mounts/secret\"\
+        )\nif [[ \"$status\" == 400 || \"$status\" == 404 ]]; then\n printf '%s' '{\"\
+        type\":\"kv\",\"options\":{\"version\":\"2\"}}' | curl -fsS -H \"X-Vault-Token:\
+        \ $token\" -H 'X-Vault-Namespace: vm-gha' -H 'Content-Type: application/json'\
+        \ -d @- \"$VAULT_ADDR/v1/sys/mounts/secret\" >/dev/null\nelif [[ \"$status\"\
+        \ != 200 ]]; then exit 1; fi\njq -n --arg marker \"github-${GITHUB_RUN_ID}\"\
+        \ '{data:{value:$marker}}' | curl -fsS -H \"X-Vault-Token: $token\" -H 'X-Vault-Namespace:\
+        \ vm-gha' -H 'Content-Type: application/json' -d @- \"$VAULT_ADDR/v1/secret/data/application/ui\"\
+        \ >/dev/null\ncreds=$(curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type:\
+        \ application/json' -d \"{\\\"kubernetes_namespace\\\":\\\"${APP_NS}\\\"}\"\
+        \ \"$VAULT_ADDR/v1/kubernetes/creds/github\")\nk8s_token=$(jq -er .data.service_account_token\
+        \ <<<\"$creds\")\necho \"::add-mask::$k8s_token\"\nprintf '%s' \"$K8S_CA\"\
+        \ | base64 -d > \"$RUNNER_TEMP/ca.pem\"\nexport KUBECONFIG=\"$RUNNER_TEMP/kubeconfig\"\
+        \nkubectl config set-cluster vm-demo --server=\"$K8S_SERVER\" --certificate-authority=\"\
+        $RUNNER_TEMP/ca.pem\" --embed-certs=true >/dev/null\nkubectl config set-credentials\
+        \ dynamic --token=\"$k8s_token\" >/dev/null\nkubectl config set-context vm-demo\
+        \ --cluster=vm-demo --user=dynamic --namespace=\"$APP_NS\" >/dev/null\nkubectl\
+        \ config use-context vm-demo >/dev/null\nkubectl auth can-i create configmaps\
+        \ | grep -qx yes\nkubectl create configmap vm-gha-evidence --from-literal=run_id=\"\
+        $GITHUB_RUN_ID\" --dry-run=client -o yaml | kubectl apply -f - >/dev/null\n\
+        jq -n --arg marker \"github-${GITHUB_RUN_ID}\" '{data:{value:$marker}}' |\
+        \ curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type: application/json'\
+        \ -d @- \"$VAULT_ADDR/v1/secret/data/vm/static\" >/dev/null\ncat <<EOF | kubectl\
+        \ apply -f - >/dev/null\napiVersion: secrets.hashicorp.com/v1beta1\nkind:\
+        \ VaultStaticSecret\nmetadata:\n  name: vm-gha-delivery\n  namespace: ${APP_NS}\n\
+        spec:\n  vaultAuthRef: vm-vault\n  namespace: vm-gha\n  type: kv-v2\n  mount:\
+        \ secret\n  path: application/ui\n  refreshAfter: 10s\n  destination:\n  \
+        \  create: true\n    name: vm-gha-delivery\n  rolloutRestartTargets:\n   \
+        \ - kind: Deployment\n      name: vm-gha-app\n---\napiVersion: apps/v1\nkind:\
+        \ Deployment\nmetadata:\n  name: vm-gha-app\n  namespace: ${APP_NS}\nspec:\n\
+        \  replicas: 1\n  selector:\n    matchLabels: {app: vm-gha-app}\n  template:\n\
+        \    metadata:\n      labels: {app: vm-gha-app}\n    spec:\n      containers:\n\
+        \        - name: app\n          image: busybox:1.37.0\n          command:\
+        \ [sh, -c, 'sleep 86400']\n          readinessProbe:\n            exec:\n\
+        \              command: [sh, -c, 'test -s /vault/value']\n          volumeMounts:\n\
+        \            - {name: secret, mountPath: /vault, readOnly: true}\n      volumes:\n\
+        \        - name: secret\n          secret: {secretName: vm-gha-delivery}\n\
+        EOF\nkubectl rollout status deployment/vm-gha-app --timeout=300s\njq '{lease_id:.lease_id}'\
+        \ <<<\"$creds\" | curl -fsS -H \"X-Vault-Token: $token\" -H 'Content-Type:\
+        \ application/json' -d @- \"$VAULT_ADDR/v1/sys/leases/revoke\" >/dev/null\n\
+        echo \"VM workflow assertions passed\"\n"

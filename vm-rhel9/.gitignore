@@ -1,0 +1,14 @@
+.env
+.state/
+.venv/
+__pycache__/
+.terraform/
+*.tfstate*
+*.tfplan
+*.auto.tfvars.json
+reports/*.executed.ipynb
+# Parent repository ignores directories named scripts and all *lock* files.
+!scripts/
+!scripts/**
+scripts/**/__pycache__/
+!terraform/**/.terraform.lock.hcl

@@ -1,0 +1,30 @@
+[
+  {
+    "endpoint": "https://vault-vm.jose-merchan.sbx.hashidemos.io:443",
+    "client_certificate_login": "passed",
+    "authorized_read": "passed",
+    "unauthorized_read": "denied",
+    "login_without_certificate": "denied"
+  },
+  {
+    "endpoint": "https://vault-vm.jose-merchan.sbx.hashidemos.io:8200",
+    "client_certificate_login": "passed",
+    "authorized_read": "passed",
+    "unauthorized_read": "denied",
+    "login_without_certificate": "denied"
+  },
+  {
+    "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io:443",
+    "client_certificate_login": "passed",
+    "authorized_read": "passed",
+    "unauthorized_read": "denied",
+    "login_without_certificate": "denied"
+  },
+  {
+    "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io:8200",
+    "client_certificate_login": "passed",
+    "authorized_read": "passed",
+    "unauthorized_read": "denied",
+    "login_without_certificate": "denied"
+  }
+]

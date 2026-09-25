@@ -1,0 +1,172 @@
+{
+  "observed_at": "2026-09-23T22:33:52Z",
+  "implementation": "bash-cli",
+  "vault_address": "https://vault-vm.jose-merchan.sbx.hashidemos.io",
+  "nodes": {
+    "primary": 6,
+    "secondary": 3,
+    "application": 1
+  },
+  "vault_version": "2.1.1+ent",
+  "os_verification": [
+    {
+      "node": "app",
+      "public_ip": "51.102.241.71",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "selinux": "Enforcing",
+      "agent_timer": "active",
+      "wildfly": "active"
+    },
+    {
+      "node": "primary-0",
+      "public_ip": "63.177.229.10",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "primary-1",
+      "public_ip": "3.120.206.137",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "primary-2",
+      "public_ip": "3.68.224.135",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "primary-3",
+      "public_ip": "63.185.114.176",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "primary-4",
+      "public_ip": "63.176.59.22",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "primary-5",
+      "public_ip": "18.157.77.61",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "34f1839b-8ac1-2298-356d-1f465a265c1c",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "primary"
+    },
+    {
+      "node": "secondary-0",
+      "public_ip": "63.189.6.251",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "8bec31ef-4713-2eb3-2358-ca6f107d542e",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "secondary"
+    },
+    {
+      "node": "secondary-1",
+      "public_ip": "63.187.42.61",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "8bec31ef-4713-2eb3-2358-ca6f107d542e",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "secondary"
+    },
+    {
+      "node": "secondary-2",
+      "public_ip": "18.159.141.153",
+      "os": "Red Hat Enterprise Linux 9.8 (Plow)",
+      "version": "2.1.1+ent",
+      "initialized": true,
+      "sealed": false,
+      "cluster_id": "8bec31ef-4713-2eb3-2358-ca6f107d542e",
+      "selinux": "Enforcing",
+      "replication_performance_mode": "secondary"
+    }
+  ],
+  "replication_latency": {
+    "seconds": [
+      1,
+      0,
+      1,
+      0,
+      1
+    ],
+    "resolution": "whole seconds; includes CLI and network overhead"
+  },
+  "autopilot": {
+    "healthy": true,
+    "failure_tolerance": 1,
+    "optimistic_failure_tolerance": 4,
+    "redundancy_zones": {
+      "eu-central-1a": {
+        "servers": [
+          "primary-0",
+          "primary-3"
+        ],
+        "voters": [
+          "primary-0"
+        ],
+        "failure_tolerance": 1
+      },
+      "eu-central-1b": {
+        "servers": [
+          "primary-1",
+          "primary-4"
+        ],
+        "voters": [
+          "primary-1"
+        ],
+        "failure_tolerance": 1
+      },
+      "eu-central-1c": {
+        "servers": [
+          "primary-2",
+          "primary-5"
+        ],
+        "voters": [
+          "primary-2"
+        ],
+        "failure_tolerance": 1
+      }
+    },
+    "voters": [
+      "primary-2",
+      "primary-0",
+      "primary-1"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vm-vault
+  namespace: vm-consumers
+spec:
+  kubernetes:
+    audiences:
+    - vault
+    role: consumer
+    serviceAccount: consumer
+    tokenExpirationSeconds: 600
+  method: kubernetes
+  mount: vm-kubernetes
+  vaultConnectionRef: vm-vault

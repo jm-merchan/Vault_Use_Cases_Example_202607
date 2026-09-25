@@ -1,0 +1,88 @@
+{
+  "evaluated_at": "2026-09-25T13:09:55Z",
+  "status": "passed",
+  "direct_connections": [
+    {
+      "direction": "primary-to-secondary",
+      "target": "secondary-0",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "primary-to-secondary",
+      "target": "secondary-1",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "primary-to-secondary",
+      "target": "secondary-2",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-0",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-1",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-2",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-3",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-4",
+      "direct_8201": "blocked"
+    },
+    {
+      "direction": "secondary-to-primary",
+      "target": "primary-5",
+      "direct_8201": "blocked"
+    }
+  ],
+  "established_secondary_to_primary_nlb_8201": true,
+  "secondary_nlb_api_and_8201": true,
+  "secondary_restart_recovery": true,
+  "replication": {
+    "cluster_id": "511d12a7-7be5-539b-6ae9-6e234beaf7f6",
+    "connection_state": "ready",
+    "corrupted_merkle_tree": false,
+    "known_primary_cluster_addrs": [
+      "https://10.1.135.159:8201",
+      "https://10.1.142.105:8201",
+      "https://10.1.152.67:8201",
+      "https://10.1.155.163:8201",
+      "https://10.1.161.48:8201",
+      "https://10.1.167.245:8201"
+    ],
+    "last_corruption_check_epoch": "-62135596800",
+    "last_reindex_epoch": "0",
+    "last_remote_wal": 0,
+    "last_start": "2026-09-25T13:07:52Z",
+    "merkle_root": "a4b36301b3d0fd88691ace894c9fe3f03401e25d",
+    "mode": "secondary",
+    "primaries": [
+      {
+        "api_address": "https://primary-0-internal.vm-vault.jose-merchan.sbx.hashidemos.io:8200",
+        "clock_skew_ms": "-1",
+        "cluster_address": "https://10.1.142.105:8201",
+        "connection_status": "connected",
+        "last_heartbeat": "2026-09-25T13:09:52Z",
+        "last_heartbeat_duration_ms": "1",
+        "replication_primary_canary_age_ms": "122163"
+      }
+    ],
+    "primary_cluster_addr": "https://vault-vm.jose-merchan.sbx.hashidemos.io:8201",
+    "secondary_id": "rhel9-secondary-nlb",
+    "ssct_generation_counter": 0,
+    "state": "stream-wals"
+  }
+}

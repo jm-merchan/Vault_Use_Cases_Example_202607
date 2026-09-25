@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle
+  namespace: vm-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: vm-oracle
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: vm-oracle
+    spec:
+      containers:
+      - env:
+        - name: ORACLE_PWD
+          valueFrom:
+            secretKeyRef:
+              key: ORACLE_PWD
+              name: oracle
+        - name: ORACLE_PDB
+          value: FREEPDB1
+        - name: INIT_SGA_SIZE
+          value: '1024'
+        - name: INIT_PGA_SIZE
+          value: '256'
+        image: container-registry.oracle.com/database/free:latest-lite
+        imagePullPolicy: IfNotPresent
+        name: oracle
+        ports:
+        - containerPort: 1521
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 1521
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: '2'
+            memory: 3Gi
+          requests:
+            cpu: 100m
+            memory: 2Gi
+        startupProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/oracle/checkDBStatus.sh
+          failureThreshold: 120
+          periodSeconds: 15
+          successThreshold: 1
+          timeoutSeconds: 10
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/oracle/oradata
+          name: data
+        - mountPath: /dev/shm
+          name: dshm
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 54321
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: oracle-data
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: dshm

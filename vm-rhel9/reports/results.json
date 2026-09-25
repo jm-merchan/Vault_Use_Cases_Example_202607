@@ -1,0 +1,186 @@
+{
+  "1_Deploy_Vault_AWS.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 55.6,
+    "evaluated_at": "2026-09-25T13:08:23.975029+00:00",
+    "executed_copy": "reports/1_Deploy_Vault_AWS.executed.ipynb"
+  },
+  "2_GHA_Vault_OIDC.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 20.5,
+    "evaluated_at": "2026-09-25T12:31:57.026274+00:00",
+    "executed_copy": "reports/2_GHA_Vault_OIDC.executed.ipynb"
+  },
+  "3A_JBOSS_WASS_Agent.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 28.4,
+    "evaluated_at": "2026-09-25T12:32:25.461297+00:00",
+    "executed_copy": "reports/3A_JBOSS_WASS_Agent.executed.ipynb"
+  },
+  "3B_JBOSS_DB_Engine_Agent.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 49.0,
+    "evaluated_at": "2026-09-25T12:33:14.509418+00:00",
+    "executed_copy": "reports/3B_JBOSS_DB_Engine_Agent.executed.ipynb"
+  },
+  "4_VSO_CSI.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 156.6,
+    "evaluated_at": "2026-09-25T12:35:51.095368+00:00",
+    "executed_copy": "reports/4_VSO_CSI.executed.ipynb"
+  },
+  "5_Secret_Sync_AWS_IRSA.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 12.1,
+    "evaluated_at": "2026-09-25T12:36:03.151461+00:00",
+    "executed_copy": "reports/5_Secret_Sync_AWS_IRSA.executed.ipynb"
+  },
+  "5_Secret_Sync_AWS_IRSA_AssumeRole.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 12.0,
+    "evaluated_at": "2026-09-25T12:36:15.147739+00:00",
+    "executed_copy": "reports/5_Secret_Sync_AWS_IRSA_AssumeRole.executed.ipynb"
+  },
+  "5_Secret_Sync_AWS_WIF_Doormat.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 15.5,
+    "evaluated_at": "2026-09-25T12:36:30.612232+00:00",
+    "executed_copy": "reports/5_Secret_Sync_AWS_WIF_Doormat.executed.ipynb"
+  },
+  "5_Secret_Sync_AWS_static_account.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 12.9,
+    "evaluated_at": "2026-09-25T12:36:43.476697+00:00",
+    "executed_copy": "reports/5_Secret_Sync_AWS_static_account.executed.ipynb"
+  },
+  "5_Secret_Sync_Azure_CLI_SPN.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 7.4,
+    "evaluated_at": "2026-09-25T12:36:50.925999+00:00",
+    "executed_copy": "reports/5_Secret_Sync_Azure_CLI_SPN.executed.ipynb"
+  },
+  "5_Secret_Sync_Azure_Terraform_SPN.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 30.3,
+    "evaluated_at": "2026-09-25T12:37:21.259576+00:00",
+    "executed_copy": "reports/5_Secret_Sync_Azure_Terraform_SPN.executed.ipynb"
+  },
+  "5_Secret_Sync_Azure_Terraform_WIF.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 31.7,
+    "evaluated_at": "2026-09-25T12:37:52.933117+00:00",
+    "executed_copy": "reports/5_Secret_Sync_Azure_Terraform_WIF.executed.ipynb"
+  },
+  "6_Oracle_DB_Engine.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 68.8,
+    "evaluated_at": "2026-09-25T12:47:04.244700+00:00",
+    "executed_copy": "reports/6_Oracle_DB_Engine.executed.ipynb"
+  },
+  "7_Secret_Migrate_AWS.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 50.8,
+    "evaluated_at": "2026-09-25T12:39:50.018553+00:00",
+    "executed_copy": "reports/7_Secret_Migrate_AWS.executed.ipynb"
+  },
+  "7_Secret_Migrate_Azure.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 46.9,
+    "evaluated_at": "2026-09-25T12:40:36.881348+00:00",
+    "executed_copy": "reports/7_Secret_Migrate_Azure.executed.ipynb"
+  },
+  "8_RBAC_Revoke_Namespace.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 32.5,
+    "evaluated_at": "2026-09-25T12:47:36.719261+00:00",
+    "executed_copy": "reports/8_RBAC_Revoke_Namespace.executed.ipynb"
+  },
+  "9_VAULT_PR.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 18.4,
+    "evaluated_at": "2026-09-25T13:08:42.369491+00:00",
+    "executed_copy": "reports/9_VAULT_PR.executed.ipynb"
+  },
+  "10_PR_config_tasks.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 74.1,
+    "evaluated_at": "2026-09-25T13:10:02.421246+00:00",
+    "executed_copy": "reports/10_PR_config_tasks.executed.ipynb"
+  },
+  "11_Audit_logs_k8s.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 4.2,
+    "evaluated_at": "2026-09-25T12:47:40.898185+00:00",
+    "executed_copy": "reports/11_Audit_logs_k8s.executed.ipynb"
+  },
+  "12_K8S_Engine_Github.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 173.8,
+    "evaluated_at": "2026-09-25T12:44:22.406578+00:00",
+    "executed_copy": "reports/12_K8S_Engine_Github.executed.ipynb"
+  },
+  "13_Grafana_Prometheus_Vault_Telemetry.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 59.7,
+    "evaluated_at": "2026-09-25T12:48:40.636194+00:00",
+    "executed_copy": "reports/13_Grafana_Prometheus_Vault_Telemetry.executed.ipynb"
+  },
+  "14_Vault_Benchmark_Kubernetes_AppRole_KV.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 117.5,
+    "evaluated_at": "2026-09-25T12:59:36.220933+00:00",
+    "executed_copy": "reports/14_Vault_Benchmark_Kubernetes_AppRole_KV.executed.ipynb"
+  },
+  "_Backup_VSO_Openshift.ipynb": {
+    "status": "passed",
+    "implementation": "bash-cli",
+    "error": "",
+    "seconds": 21.6,
+    "evaluated_at": "2026-09-25T12:46:47.826434+00:00",
+    "executed_copy": "reports/_Backup_VSO_Openshift.executed.ipynb"
+  }
+}

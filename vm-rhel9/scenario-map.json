@@ -1,0 +1,117 @@
+[
+  {
+    "source": "1_Deploy_Vault_AWS.ipynb",
+    "vm_notebook": "notebooks/1_Deploy_Vault_AWS.ipynb",
+    "title": "Despliegue de Vault Enterprise en RHEL 9"
+  },
+  {
+    "source": "2_GHA_Vault_OIDC.ipynb",
+    "vm_notebook": "notebooks/2_GHA_Vault_OIDC.ipynb",
+    "title": "GitHub Actions OIDC"
+  },
+  {
+    "source": "3A_JBOSS_WASS_Agent.ipynb",
+    "vm_notebook": "notebooks/3A_JBOSS_WASS_Agent.ipynb",
+    "title": "Vault Agent y WildFly sobre RHEL 9"
+  },
+  {
+    "source": "3B_JBOSS_DB_Engine_Agent.ipynb",
+    "vm_notebook": "notebooks/3B_JBOSS_DB_Engine_Agent.ipynb",
+    "title": "Credenciales dinámicas en WildFly"
+  },
+  {
+    "source": "4_VSO_CSI.ipynb",
+    "vm_notebook": "notebooks/4_VSO_CSI.ipynb",
+    "title": "VSO y CSI con Vault externo"
+  },
+  {
+    "source": "5_Secret_Sync_AWS_IRSA.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_AWS_IRSA.ipynb",
+    "title": "AWS Sync mediante perfil EC2"
+  },
+  {
+    "source": "5_Secret_Sync_AWS_IRSA_AssumeRole.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_AWS_IRSA_AssumeRole.ipynb",
+    "title": "AWS Sync mediante EC2 y AssumeRole"
+  },
+  {
+    "source": "5_Secret_Sync_AWS_WIF_Doormat.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_AWS_WIF_Doormat.ipynb",
+    "title": "AWS Sync mediante WIF"
+  },
+  {
+    "source": "5_Secret_Sync_AWS_static_account.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_AWS_static_account.ipynb",
+    "title": "AWS Sync con rol asumido por indicación del usuario"
+  },
+  {
+    "source": "5_Secret_Sync_Azure_CLI_SPN.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_Azure_CLI_SPN.ipynb",
+    "title": "Azure Sync CLI y SPN"
+  },
+  {
+    "source": "5_Secret_Sync_Azure_Terraform_SPN.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_Azure_Terraform_SPN.ipynb",
+    "title": "Azure Sync Terraform SPN"
+  },
+  {
+    "source": "5_Secret_Sync_Azure_Terraform_WIF.ipynb",
+    "vm_notebook": "notebooks/5_Secret_Sync_Azure_Terraform_WIF.ipynb",
+    "title": "Azure Sync Terraform WIF"
+  },
+  {
+    "source": "6_Oracle_DB_Engine.ipynb",
+    "vm_notebook": "notebooks/6_Oracle_DB_Engine.ipynb",
+    "title": "Oracle Database Secrets Engine"
+  },
+  {
+    "source": "7_Secret_Migrate_AWS.ipynb",
+    "vm_notebook": "notebooks/7_Secret_Migrate_AWS.ipynb",
+    "title": "Importar secretos AWS"
+  },
+  {
+    "source": "7_Secret_Migrate_Azure.ipynb",
+    "vm_notebook": "notebooks/7_Secret_Migrate_Azure.ipynb",
+    "title": "Importar secretos Azure"
+  },
+  {
+    "source": "8_RBAC_Revoke_Namespace.ipynb",
+    "vm_notebook": "notebooks/8_RBAC_Revoke_Namespace.ipynb",
+    "title": "RBAC, LDAP y namespaces"
+  },
+  {
+    "source": "9_VAULT_PR.ipynb",
+    "vm_notebook": "notebooks/9_VAULT_PR.ipynb",
+    "title": "Clúster secundario RHEL 9"
+  },
+  {
+    "source": "10_PR_config_tasks.ipynb",
+    "vm_notebook": "notebooks/10_PR_config_tasks.ipynb",
+    "title": "Performance Replication"
+  },
+  {
+    "source": "11_Audit_logs_k8s.ipynb",
+    "vm_notebook": "notebooks/11_Audit_logs_k8s.ipynb",
+    "title": "Auditoría en RHEL 9"
+  },
+  {
+    "source": "12_K8S_Engine_Github.ipynb",
+    "vm_notebook": "notebooks/12_K8S_Engine_Github.ipynb",
+    "title": "Kubernetes Engine y GitHub OIDC"
+  },
+  {
+    "source": "13_Grafana_Prometheus_Vault_Telemetry.ipynb",
+    "vm_notebook": "notebooks/13_Grafana_Prometheus_Vault_Telemetry.ipynb",
+    "title": "Telemetría de las VMs"
+  },
+  {
+    "source": "14_Vault_Benchmark_Kubernetes_AppRole_KV.ipynb",
+    "vm_notebook": "notebooks/14_Vault_Benchmark_Kubernetes_AppRole_KV.ipynb",
+    "title": "Benchmark AppRole y KV"
+  },
+  {
+    "source": "_Backup_VSO_Openshift.ipynb",
+    "vm_notebook": "notebooks/_Backup_VSO_Openshift.ipynb",
+    "title": "VSO JWT y JWKS público"
+  }
+]

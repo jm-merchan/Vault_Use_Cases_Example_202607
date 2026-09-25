@@ -1,0 +1,82 @@
+{
+  "evaluated_at": "2026-09-25T13:11:57.267577+00:00",
+  "status": "passed",
+  "vault_version": "2.1.1+ent",
+  "original_notebooks": {
+    "passed": 23,
+    "failed": 0,
+    "source_matches_executed": true,
+    "details": "../reports/results.json"
+  },
+  "additional_notebooks": {
+    "aap/15_AAP_Vault_AppRole_OIDC.ipynb": {
+      "status": "passed",
+      "executed_code_cells": 9
+    },
+    "load-balancing/16_Dual_FQDN.ipynb": {
+      "status": "passed",
+      "executed_code_cells": 5
+    },
+    "load-balancing/17_NLB_LetsEncrypt_PR.ipynb": {
+      "status": "passed",
+      "executed_code_cells": 6
+    }
+  },
+  "transport": {
+    "load_balancer": "AWS NLB",
+    "listener_protocol": "TCP",
+    "api_ports": [
+      443,
+      8200
+    ],
+    "api_target_port": 8200,
+    "replication_port": 8201,
+    "tls_termination": "Vault",
+    "api_certificate_issuer": "Lets Encrypt YE2",
+    "replication_certificates": "Vault-managed mTLS",
+    "cluster_addr": "per-node private address; direct intra-cluster traffic"
+  },
+  "vault_configuration": {
+    "enable_response_header_hostname": true,
+    "enable_response_header_raft_node_id": true,
+    "resolver_discover_servers": "omitted; default true",
+    "verified_nodes": 9,
+    "evidence": "response-headers-results.json"
+  },
+  "pr_validation": {
+    "state": "stream-wals",
+    "connection_state": "ready",
+    "primary_cluster_addr": "https://vault-vm.jose-merchan.sbx.hashidemos.io:8201",
+    "direct_cross_cluster_paths_blocked": 9,
+    "nlb_socket_verified": true,
+    "evidence": "pr-nlb-results.json",
+    "reconnection_observation": {
+      "secondary_leader": "secondary-1",
+      "wal_requested_at": "2026-09-25T13:07:52.145Z",
+      "wal_stream_started_at": "2026-09-25T13:09:52.893Z",
+      "seconds_between_log_events": 120.748,
+      "source": "secondary-1 journalctl -u vault",
+      "scope": "Observed automatic recovery after secondary leader restart; not an RTO guarantee or attribution to the historical fixed defect"
+    }
+  },
+  "routing_evidence": "results.json",
+  "client_certificate_auth": {
+    "verified_endpoints": 4,
+    "negative_tests_passed": true,
+    "evidence": "client-cert-results.json"
+  },
+  "integration_endpoints": {
+    "verified_consumer_groups": 10,
+    "evidence": "integration-endpoints.json"
+  },
+  "aap": {
+    "passed": true,
+    "functional_tests": 5,
+    "evidence": "../aap/evaluation.json"
+  },
+  "limits": [
+    "Certificate renewal is manual and requires a valid Doormat session; certificate expires 2026-12-24.",
+    "The OpenShift supplemental notebook is functionally evaluated on EKS, not native OpenShift SCC.",
+    "Notebook timestamps are recorded per execution; unchanged cases were not rerun solely for the response-header change."
+  ]
+}

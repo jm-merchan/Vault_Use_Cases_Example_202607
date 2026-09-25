@@ -1,0 +1,77 @@
+{
+  "status": "passed",
+  "evaluated_at": "2026-09-25T13:07:20Z",
+  "admin_endpoint": "https://vault-vm.jose-merchan.sbx.hashidemos.io",
+  "application_endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+  "healthy_admin_targets": 1,
+  "healthy_application_targets": 6,
+  "admin_leader_requests": 12,
+  "successful_application_reads": 60,
+  "application_write": "passed",
+  "tls_and_ui": "passed",
+  "audit_distribution": [
+    {
+      "node": "primary-0",
+      "private_ip": "10.1.142.105",
+      "successful_read_responses": 17
+    },
+    {
+      "node": "primary-1",
+      "private_ip": "10.1.155.163",
+      "successful_read_responses": 10
+    },
+    {
+      "node": "primary-2",
+      "private_ip": "10.1.161.48",
+      "successful_read_responses": 9
+    },
+    {
+      "node": "primary-3",
+      "private_ip": "10.1.135.159",
+      "successful_read_responses": 13
+    },
+    {
+      "node": "primary-4",
+      "private_ip": "10.1.152.67",
+      "successful_read_responses": 6
+    },
+    {
+      "node": "primary-5",
+      "private_ip": "10.1.167.245",
+      "successful_read_responses": 5
+    }
+  ],
+  "response_header_distribution": [
+    {
+      "node": "primary-0",
+      "hostname": "ip-10-1-142-105.eu-central-1.compute.internal",
+      "responses": 17
+    },
+    {
+      "node": "primary-1",
+      "hostname": "ip-10-1-155-163.eu-central-1.compute.internal",
+      "responses": 10
+    },
+    {
+      "node": "primary-2",
+      "hostname": "ip-10-1-161-48.eu-central-1.compute.internal",
+      "responses": 9
+    },
+    {
+      "node": "primary-3",
+      "hostname": "ip-10-1-135-159.eu-central-1.compute.internal",
+      "responses": 13
+    },
+    {
+      "node": "primary-4",
+      "hostname": "ip-10-1-152-67.eu-central-1.compute.internal",
+      "responses": 6
+    },
+    {
+      "node": "primary-5",
+      "hostname": "ip-10-1-167-245.eu-central-1.compute.internal",
+      "responses": 5
+    }
+  ],
+  "scope": "Normal operation; no induced leader failover"
+}

@@ -1,0 +1,92 @@
+{
+  "evaluated_at": "2026-09-25T13:10:55Z",
+  "status": "passed",
+  "resolver_discover_servers": "default (true)",
+  "nodes": [
+    {
+      "node": "primary-0",
+      "hostname": "ip-10-1-142-105.eu-central-1.compute.internal",
+      "raft_node_id": "primary-0",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "primary-1",
+      "hostname": "ip-10-1-155-163.eu-central-1.compute.internal",
+      "raft_node_id": "primary-1",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "primary-2",
+      "hostname": "ip-10-1-161-48.eu-central-1.compute.internal",
+      "raft_node_id": "primary-2",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "primary-3",
+      "hostname": "ip-10-1-135-159.eu-central-1.compute.internal",
+      "raft_node_id": "primary-3",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "primary-4",
+      "hostname": "ip-10-1-152-67.eu-central-1.compute.internal",
+      "raft_node_id": "primary-4",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "primary-5",
+      "hostname": "ip-10-1-167-245.eu-central-1.compute.internal",
+      "raft_node_id": "primary-5",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "secondary-0",
+      "hostname": "ip-10-1-134-108.eu-central-1.compute.internal",
+      "raft_node_id": "secondary-0",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "secondary-1",
+      "hostname": "ip-10-1-151-17.eu-central-1.compute.internal",
+      "raft_node_id": "secondary-1",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    },
+    {
+      "node": "secondary-2",
+      "hostname": "ip-10-1-174-155.eu-central-1.compute.internal",
+      "raft_node_id": "secondary-2",
+      "resolver_override_absent": true,
+      "retry_join_peers_correct": true
+    }
+  ],
+  "endpoints": [
+    {
+      "endpoint": "https://vault-vm.jose-merchan.sbx.hashidemos.io:443",
+      "hostname": "ip-10-1-142-105.eu-central-1.compute.internal",
+      "raft_node_id": "primary-0"
+    },
+    {
+      "endpoint": "https://vault-vm.jose-merchan.sbx.hashidemos.io:8200",
+      "hostname": "ip-10-1-142-105.eu-central-1.compute.internal",
+      "raft_node_id": "primary-0"
+    },
+    {
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io:443",
+      "hostname": "ip-10-1-161-48.eu-central-1.compute.internal",
+      "raft_node_id": "primary-2"
+    },
+    {
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io:8200",
+      "hostname": "ip-10-1-142-105.eu-central-1.compute.internal",
+      "raft_node_id": "primary-0"
+    }
+  ]
+}

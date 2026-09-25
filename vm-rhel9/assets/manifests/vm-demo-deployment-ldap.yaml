@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldap
+  namespace: vm-demo
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: vm-ldap
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: vm-ldap
+    spec:
+      containers:
+      - env:
+        - name: LDAP_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: LDAP_ADMIN_PASSWORD
+              name: ldap
+        - name: LDAP_DOMAIN
+          value: vm.example
+        - name: LDAP_ORGANISATION
+          value: VM Demo
+        - name: LDAP_TLS
+          value: 'false'
+        image: osixia/openldap:1.5.0
+        imagePullPolicy: IfNotPresent
+        name: ldap
+        ports:
+        - containerPort: 389
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 389
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: '2'
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: false
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

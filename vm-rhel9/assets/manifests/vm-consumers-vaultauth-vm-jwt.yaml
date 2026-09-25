@@ -1,0 +1,15 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vm-jwt
+  namespace: vm-consumers
+spec:
+  jwt:
+    audiences:
+    - vault
+    role: consumer
+    serviceAccount: consumer
+    tokenExpirationSeconds: 600
+  method: jwt
+  mount: vm-jwt
+  vaultConnectionRef: vm-jwt

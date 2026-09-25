@@ -1,0 +1,53 @@
+{
+  "evaluated_at": "2026-09-25T12:33:49Z",
+  "aap_url": "https://aap-vm.jose-merchan.sbx.hashidemos.io",
+  "vault_url": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+  "tests": [
+    {
+      "method": "AppRole",
+      "phase": "initial",
+      "job": 26,
+      "status": "successful",
+      "expected": "successful",
+      "passed": true,
+      "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/26/details"
+    },
+    {
+      "method": "OIDC",
+      "phase": "initial",
+      "job": 27,
+      "status": "successful",
+      "expected": "successful",
+      "passed": true,
+      "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/27/details"
+    },
+    {
+      "method": "AppRole",
+      "phase": "rotated",
+      "job": 28,
+      "status": "successful",
+      "expected": "successful",
+      "passed": true,
+      "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/28/details"
+    },
+    {
+      "method": "OIDC",
+      "phase": "rotated",
+      "job": 29,
+      "status": "successful",
+      "expected": "successful",
+      "passed": true,
+      "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/29/details"
+    },
+    {
+      "method": "OIDC",
+      "phase": "unauthorized_template",
+      "job": 30,
+      "status": "error",
+      "expected": "rejected",
+      "passed": true,
+      "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/30/details"
+    }
+  ],
+  "passed": true
+}

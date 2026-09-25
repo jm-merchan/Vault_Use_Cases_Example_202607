@@ -1,0 +1,199 @@
+{
+  "status": "passed",
+  "evaluated_at": "2026-09-25T11:59:39.359332+00:00",
+  "application_endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+  "integration_notebooks": [
+    {
+      "notebook": "12_K8S_Engine_Github.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:56:00.390247+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "14_Vault_Benchmark_Kubernetes_AppRole_KV.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:57:59.706721+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "2_GHA_Vault_OIDC.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:46:04.703485+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "3A_JBOSS_WASS_Agent.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:46:36.442765+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "3B_JBOSS_DB_Engine_Agent.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:47:28.374036+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "4_VSO_CSI.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:50:07.078012+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_AWS_IRSA.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:50:19.633900+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_AWS_IRSA_AssumeRole.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:50:32.342659+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_AWS_WIF_Doormat.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:50:47.981498+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_AWS_static_account.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:51:00.464706+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_Azure_CLI_SPN.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:55:14.845006+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_Azure_Terraform_SPN.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:55:47.944906+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "5_Secret_Sync_Azure_Terraform_WIF.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:56:19.883237+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "6_Oracle_DB_Engine.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:52:07.249844+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "7_Secret_Migrate_AWS.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:52:57.349013+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "7_Secret_Migrate_Azure.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:57:10.484671+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "8_RBAC_Revoke_Namespace.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:53:28.683666+00:00",
+      "executed_source_matches": true
+    },
+    {
+      "notebook": "_Backup_VSO_Openshift.ipynb",
+      "status": "passed",
+      "evaluated_at": "2026-09-25T11:58:21.851142+00:00",
+      "executed_source_matches": true
+    }
+  ],
+  "aap": {
+    "status": "passed",
+    "tests": [
+      {
+        "method": "AppRole",
+        "phase": "initial",
+        "job": 21,
+        "status": "successful",
+        "expected": "successful",
+        "passed": true,
+        "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/21/details"
+      },
+      {
+        "method": "OIDC",
+        "phase": "initial",
+        "job": 22,
+        "status": "successful",
+        "expected": "successful",
+        "passed": true,
+        "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/22/details"
+      },
+      {
+        "method": "AppRole",
+        "phase": "rotated",
+        "job": 23,
+        "status": "successful",
+        "expected": "successful",
+        "passed": true,
+        "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/23/details"
+      },
+      {
+        "method": "OIDC",
+        "phase": "rotated",
+        "job": 24,
+        "status": "successful",
+        "expected": "successful",
+        "passed": true,
+        "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/24/details"
+      },
+      {
+        "method": "OIDC",
+        "phase": "unauthorized_template",
+        "job": 25,
+        "status": "error",
+        "expected": "rejected",
+        "passed": true,
+        "url": "https://aap-vm.jose-merchan.sbx.hashidemos.io/execution/jobs/playbook/25/details"
+      }
+    ]
+  },
+  "additional_reevaluated_notebooks": {
+    "10_PR_config_tasks.ipynb": {
+      "status": "passed",
+      "implementation": "bash-cli",
+      "error": "",
+      "seconds": 7.0,
+      "evaluated_at": "2026-09-25T11:51:29.454365+00:00",
+      "executed_copy": "reports/10_PR_config_tasks.executed.ipynb"
+    },
+    "13_Grafana_Prometheus_Vault_Telemetry.ipynb": {
+      "status": "passed",
+      "implementation": "bash-cli",
+      "error": "",
+      "seconds": 35.5,
+      "evaluated_at": "2026-09-25T11:52:04.914313+00:00",
+      "executed_copy": "reports/13_Grafana_Prometheus_Vault_Telemetry.executed.ipynb"
+    }
+  },
+  "benchmark": {
+    "successful_operations": 1500,
+    "success_ratio": "100.00%"
+  },
+  "live_endpoint_inventory": "integration-endpoints.json",
+  "preserved_endpoints": [
+    "Administrative UI and provisioning",
+    "Existing AWS/Azure WIF issuer",
+    "Per-node Prometheus scrape addresses",
+    "Direct private cluster/PR addresses on 8201"
+  ],
+  "not_rerun_in_this_migration": [
+    "1_Deploy_Vault_AWS.ipynb",
+    "9_VAULT_PR.ipynb",
+    "11_Audit_logs_k8s.ipynb"
+  ]
+}

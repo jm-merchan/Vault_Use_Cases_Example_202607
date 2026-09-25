@@ -1,0 +1,7 @@
+{
+  "source_notebooks": 23,
+  "vm_notebooks": 23,
+  "status": "passed",
+  "errors": [],
+  "scope": "Offline notebook schema, syntax, coverage and Terraform formatting only"
+}

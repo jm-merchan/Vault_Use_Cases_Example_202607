@@ -1,0 +1,25 @@
+{
+  "mode": "secondary",
+  "state": "stream-wals",
+  "connection_state": "ready",
+  "primary_cluster_addr": "https://10.1.161.48:8201",
+  "known_primary_cluster_addrs": [
+    "https://10.1.135.159:8201",
+    "https://10.1.142.105:8201",
+    "https://10.1.152.67:8201",
+    "https://10.1.155.163:8201",
+    "https://10.1.161.48:8201",
+    "https://10.1.167.245:8201"
+  ],
+  "primaries": [
+    {
+      "api_address": "https://10.1.161.48:8200",
+      "clock_skew_ms": "-3",
+      "cluster_address": "https://10.1.161.48:8201",
+      "connection_status": "connected",
+      "last_heartbeat": "2026-09-25T12:00:08Z",
+      "last_heartbeat_duration_ms": "4",
+      "replication_primary_canary_age_ms": "213"
+    }
+  ]
+}

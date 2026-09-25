@@ -1,0 +1,22 @@
+[
+  {
+    "operation": "approle_logins",
+    "count": 721,
+    "rate": 24.129627,
+    "throughput": 24.058644,
+    "mean": "85.468076ms",
+    "p95": "94.950251ms",
+    "p99": "109.334086ms",
+    "success_ratio": "100.00%"
+  },
+  {
+    "operation": "static_secret_writes",
+    "count": 779,
+    "rate": 25.983538,
+    "throughput": 25.914114,
+    "mean": "77.758578ms",
+    "p95": "87.601265ms",
+    "p99": "97.011632ms",
+    "success_ratio": "100.00%"
+  }
+]

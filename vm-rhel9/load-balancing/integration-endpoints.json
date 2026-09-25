@@ -1,0 +1,57 @@
+{
+  "verified_at": "2026-09-25T13:07:20Z",
+  "status": "passed",
+  "scope": "Deployed consumer addresses; functional results are in notebook reports and aap/evaluation.json",
+  "consumers": [
+    {
+      "consumer": "AAP AppRole",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "AAP OIDC",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "VSO Kubernetes and JWT connections",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "CSI",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "Vault Agent static and dynamic, including timer",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "GitHub vault-oidc.yml",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "GitHub vault-k8s-engine-vso.yml",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "Vault benchmark",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "Secrets Import aws",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    },
+    {
+      "consumer": "Secrets Import azure",
+      "endpoint": "https://vault-vm-apps.jose-merchan.sbx.hashidemos.io",
+      "verified": true
+    }
+  ]
+}

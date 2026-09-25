@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+hostnamectl set-hostname '${domain}'
+private_ip=$(hostname -I | awk '{print $1}')
+printf '%s %s\n' "$private_ip" '${domain}' >> /etc/hosts
+dnf install -y ansible-core podman git jq rsync tar unzip openssl firewalld python3-psycopg2
+loginctl enable-linger ec2-user
+grep -q '^ec2-user:' /etc/subuid || usermod --add-subuids 100000-165535 ec2-user
+grep -q '^ec2-user:' /etc/subgid || usermod --add-subgids 100000-165535 ec2-user
+systemctl enable --now chronyd firewalld
+firewall-cmd --permanent --add-service=ssh
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
+test "$(getenforce)" = Enforcing
+install -d -o ec2-user -g ec2-user -m 0700 /home/ec2-user/aap
+touch /var/lib/aap-bootstrap-ready

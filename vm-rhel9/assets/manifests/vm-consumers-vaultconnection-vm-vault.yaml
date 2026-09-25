@@ -1,0 +1,8 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: vm-vault
+  namespace: vm-consumers
+spec:
+  address: https://vault-vm-apps.jose-merchan.sbx.hashidemos.io
+  skipTLSVerify: false
