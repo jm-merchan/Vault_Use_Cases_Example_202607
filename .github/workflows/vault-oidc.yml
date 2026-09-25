@@ -8,7 +8,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     env:
-      VAULT_ADDR: https://vault-vm.jose-merchan.sbx.hashidemos.io
+      VAULT_ADDR: https://vault-vm-apps.jose-merchan.sbx.hashidemos.io
       ROLE: read
     steps:
     - name: Verify Vault on RHEL9
