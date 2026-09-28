@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# Usage: bash aap/install.sh /absolute/path/to/official-bundle.tar.gz
+# Usage: bash aap/install.sh [optional/path/to/official-bundle.tar.gz]
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/../scripts/notebook-env.sh"
-: "${1:?Pass the official AAP 2.7 RHEL 9 x86_64 containerized setup bundle}"
-BUNDLE=$1
-test -s "$BUNDLE"
+BUNDLE="${1:-$VM_ROOT/ansible-automation-platform-containerized-setup-bundle-2.7-1.1-x86_64.tar.gz}"
+[[ -s "$BUNDLE" ]] || { printf 'AAP setup bundle not found or empty: %s\n' "$BUNDLE" >&2; exit 1; }
 mkdir -p "$STATE/aap"
 IP=$(jq -er .public_ip "$STATE/aap/infrastructure.json")
 AAP_ADDR=$(jq -er .aap_address "$STATE/aap/infrastructure.json")

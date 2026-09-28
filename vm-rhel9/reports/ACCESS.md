@@ -1,10 +1,12 @@
 # Acceso a la variante VM
 
+> **Acceso histórico: la infraestructura se retiró el 25-09-2026.** Estas IP y URLs ya no corresponden a una demo activa. Véase [TEARDOWN.md](TEARDOWN.md).
+
 Vault: https://vault-vm.jose-merchan.sbx.hashidemos.io/ui/
 
 Aplicaciones: https://vault-vm-apps.jose-merchan.sbx.hashidemos.io (activo y performance standbys).
 
-Login: método Token, namespace vacío (root). El token vigente está en `.state/primary-init.json`.
+Login: método Token, namespace vacío (root). Después de redesplegar, usar `.state/primary-init.json` del despliegue nuevo; el token conservado de la retirada es histórico.
 
 Desde `vm-rhel9`, copiarlo al portapapeles de macOS sin imprimirlo:
 

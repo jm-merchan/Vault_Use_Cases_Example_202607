@@ -1,6 +1,8 @@
 # Vault en VMs: NLB TCP y TLS hasta Vault
 
-Los endpoints conservan sus URLs. Los NLB tienen listeners **TCP**, sin certificados ACM ni terminación TLS:
+> **Entorno retirado el 25-09-2026.** Las tablas describen la configuración reproducible y los JSON/notebooks conservan evidencia histórica. Primero seguir la [guía de ejecución](../EXECUTION.md).
+
+Los endpoints definidos conservan sus URLs. Los NLB tienen listeners **TCP**, sin certificados ACM ni terminación TLS:
 
 | FQDN | Puertos del NLB → Vault | Destinos |
 |---|---|---|
@@ -27,30 +29,36 @@ Cada nodo tiene un FQDN de diagnóstico que resuelve a su IP pública (`primary-
 
 La CA de certificados de **cliente** de la prueba es independiente de Let’s Encrypt. El método `cert` de Vault comprueba ese certificado, limita el CN y entrega una política de solo lectura. Los NLB dejan llegar el handshake original a Vault.
 
-Renovar desde una terminal con Doormat vigente:
+Después de desplegar, renovar desde `vm-rhel9`, en una terminal Bash con Doormat vigente:
 
 ```bash
-cd vm-rhel9/load-balancing
-bash renew-public-certificates.sh
+bash load-balancing/renew-public-certificates.sh
 ```
 
 El script usa `certbot renew`, despliega la cadena y clave y recarga Vault con SIGHUP si el HCL no cambia. No hay temporizador desatendido: la demo utiliza sesiones personales Doormat temporales. Para operación permanente se debe programar esta tarea desde una identidad de servicio con permisos DNS y de despliegue adecuados. Los comandos y las claves permanecen separados: los archivos sensibles están en `.state` y `$HOME/.vault-demo/letsencrypt-vm`, fuera del repositorio versionado.
 
 ## Performance Replication mediante balanceador
 
-La API de bootstrap y el canal de replicación son distintos:
+La API de bootstrap y el canal de replicación son distintos. El siguiente fragmento actualiza una PR **ya activa**, después de los notebooks 1 → 9 → 10; no sustituye su inicialización. Ejecutarlo desde `vm-rhel9` con `SECONDARY_TOKEN` (token emitido por el secundario con permiso `update`/`sudo`) y `ACTIVATION_TOKEN` (nuevo token de activación del primario). El token root anterior a la activación PR no sirve en el secundario. El [notebook 17](17_NLB_LetsEncrypt_PR.ipynb) muestra cómo obtener estas credenciales sin imprimirlas:
 
 ```bash
-export VAULT_ADDR=https://vault-vm.jose-merchan.sbx.hashidemos.io
+source scripts/notebook-env.sh
+export VAULT_ADDR="$VAULT_ADMIN_ADDR"
+: "${SECONDARY_TOKEN:?Obtener primero una credencial del secundario}"
+: "${ACTIVATION_TOKEN:?Obtener primero un token de activación del primario}"
+# API de diagnóstico accesible desde la IP del operador. El NLB secundario es privado.
+SECONDARY_ADDR="https://$(jq -er '.nodes["secondary-0"].api_fqdn' "$STATE/infrastructure.json"):8200"
 vault write sys/replication/performance/primary/enable \
-  primary_cluster_addr=https://vault-vm.jose-merchan.sbx.hashidemos.io:8201
+  primary_cluster_addr="${VAULT_ADMIN_ADDR}:8201"
 
-# En el secundario, con una credencial de administración local y el token de activación:
-vault write sys/replication/performance/secondary/update-primary \
+# Dirigir explícitamente la operación al secundario con su propia credencial:
+VAULT_ADDR="$SECONDARY_ADDR" VAULT_TOKEN="$SECONDARY_TOKEN" vault write sys/replication/performance/secondary/update-primary \
   token="$ACTIVATION_TOKEN" \
-  primary_api_addr=https://vault-vm.jose-merchan.sbx.hashidemos.io \
+  primary_api_addr="$VAULT_ADMIN_ADDR" \
   ca_file=/etc/pki/tls/certs/ca-bundle.crt
 ```
+
+`ca_file` es una ruta del servidor Vault secundario, no del portátil. La API de diagnóstico solo se usa para administrar esta operación; el stream PR sigue pasando por el NLB 8201.
 
 `update-primary` conserva el almacenamiento; no se usa `disable` ni se vuelve a inicializar Raft. El notebook muestra la obtención y uso de las credenciales sin imprimir sus valores.
 
@@ -80,6 +88,8 @@ Vault puede seguir mostrando IP de nodos en `known_primary_cluster_addrs` e inte
 Con el valor predeterminado, la prueba del 25-09-2026 recuperó el stream aproximadamente 121 segundos después de la primera solicitud de WAL del nuevo líder secundario. Durante la espera se observaron intentos TCP a IP de nodos bloqueadas por los SG. La reconexión terminó automáticamente por NLB. Es una observación de esta topología, no una garantía de RTO ni una identificación del defecto histórico corregido.
 
 ## Notebooks, comandos y evidencia
+
+Prerrequisitos: notebook 1 completo para el 16 (incluye auditoría `file/` en los seis primarios); notebooks 1, 9 y 10 completos para el 17. Sesión AWS exportada, Podman, OpenSSL 3, `dig`, SSH y `.state/` del despliegue actual. Ejecutar las celdas desde `vm-rhel9/load-balancing`. La guía propone ejecutar los 23 casos primero y después estos complementos; no se incluyen automáticamente en `evaluate.py`.
 
 - [17_NLB_LetsEncrypt_PR.ipynb](17_NLB_LetsEncrypt_PR.ipynb): emisión, instalación gradual, Terraform, PR, aislamiento y login con certificado. [Comandos Bash equivalentes](17_NLB_LetsEncrypt_PR.sh).
 - [16_Dual_FQDN.ipynb](16_Dual_FQDN.ipynb): selección del líder, reparto de lecturas entre seis nodos, UI y TLS. [Bash](16_Dual_FQDN.sh).

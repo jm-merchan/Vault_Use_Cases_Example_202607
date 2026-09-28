@@ -1,5 +1,7 @@
 # Vault Enterprise sobre VMs RHEL 9
 
+> **Estado actual (25-09-2026): recursos retirados, incluido EKS mediante HCP Terraform.** Se conservan código y notebooks. Los resultados anteriores son históricos. Véase [el informe de retirada](reports/TEARDOWN.md).
+
 Versión independiente de los **23 notebooks** del repositorio, incluido `_Backup_VSO_Openshift`. Los notebooks originales permanecen intactos. La correspondencia exacta está en [scenario-map.json](scenario-map.json).
 
 La ampliación con una instancia propia de **AAP 2.7 sobre RHEL 9**, integrada con Vault mediante AppRole y OIDC de workloads, está en [aap/README.md](aap/README.md). Su [notebook Bash](aap/15_AAP_Vault_AppRole_OIDC.ipynb) es un caso adicional a los 23 originales y conserva sus resultados de ejecución en el propio archivo.
@@ -9,25 +11,27 @@ La ampliación con una instancia propia de **AAP 2.7 sobre RHEL 9**, integrada c
 - **6 VMs primarias** RHEL 9 x86_64, dos por zona de disponibilidad. Raft integrado y Autopilot redundancy zones.
 - **3 VMs secundarias** RHEL 9 para Performance Replication.
 - **1 VM de aplicación** RHEL 9 para Vault Agent y WildFly con OpenJDK 21.
-- Vault Enterprise **2.1.1+ent**, servicio `systemd`, SELinux enforcing, TLS interno, KMS auto-unseal e IMDSv2 obligatorio. La AMI oficial RHUI de Red Hat se resuelve en AWS; la versión observada se registra durante la evaluación.
+- Vault Enterprise **2.1.1+ent**, servicio `systemd`, SELinux enforcing, TLS con Let’s Encrypt, KMS auto-unseal e IMDSv2 obligatorio. La AMI oficial RHUI de Red Hat se resuelve en AWS; la versión observada se registra durante la evaluación.
 - Tres NLB TCP con TLS hasta Vault y certificados Let’s Encrypt: administración al líder, aplicaciones al activo más cinco performance standbys y un NLB privado para el secundario. API en 443/8200, PR en 8201 por NLB y Raft directo dentro de cada clúster. Configuración, renovación y pruebas: [load-balancing/README.md](load-balancing/README.md).
-- PostgreSQL, Oracle, LDAP, VSO, CSI, Prometheus, Grafana y benchmark en el EKS existente, dentro de namespaces `vm-*`. Bases de datos y LDAP usan NLB internos: los nombres `.svc.cluster.local` no se utilizan desde las VMs.
+- PostgreSQL, Oracle, LDAP, VSO, CSI, Prometheus, Grafana y benchmark en un EKS previamente desplegado, dentro de namespaces `vm-*`. Bases de datos y LDAP usan NLB internos: los nombres `.svc.cluster.local` no se utilizan desde las VMs.
 - Los originales de IRSA usan **instance profile EC2** en esta variante; se conserva el nombre del notebook para facilitar la correspondencia. Los escenarios AssumeRole y WIF siguen siendo independientes. Por indicación del usuario, el cuaderno de credenciales estáticas se convierte en otro destino con rol asumido, operado desde Doormat; no crea usuarios IAM ni necesita claves permanentes.
 
-El perfil necesita permiso para crear EC2, IAM, KMS, ELB y registros Route 53 en la VPC de EKS. Los diez nodos `t3.medium`, sus discos y balanceadores permanecen desplegados al terminar. GitHub se evalúa en la rama `codex/vm-rhel9-poc`, sin modificar la rama principal.
+El perfil necesita permiso para crear EC2, IAM, KMS, ELB y registros Route 53 en la VPC de EKS. La evaluación no elimina los diez nodos `t3.medium`, sus discos ni sus balanceadores al terminar; la retirada es una fase independiente. El entorno de septiembre de 2026 ya fue retirado. GitHub se evalúa en la rama `codex/vm-rhel9-poc`, sin modificar la rama principal.
 
 ## Preparación
 
-Desde este subdirectorio:
+Seguir primero la [guía de ejecución y redespliegue](EXECUTION.md), especialmente si se conservan archivos del entorno retirado. EKS y su VPC deben existir antes del notebook 1; los notebooks VM no los crean.
+
+Desde `vm-rhel9`, en Bash:
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m ipykernel install --prefix .venv --name vm-rhel9-poc --display-name 'Vault RHEL9 PoC'
-cp .env.example .env
+[[ -f .env ]] || cp .env.example .env
 ```
 
-Herramientas locales: Terraform >=1.14, AWS CLI, Azure CLI, `vault` Enterprise con `operator import`, `kubectl`, Helm, GitHub CLI, OpenSSH y, para el perfil original, Doormat. Azure y GitHub deben tener una sesión válida. La licencia se lee de `../vault.hclic` o de `VAULT_LICENSE_FILE`; jamás se incluye en user-data o Terraform.
+Herramientas locales: Python >=3.9, Bash, Terraform >=1.14 y <2.0, AWS CLI, Azure CLI, `vault` Enterprise con `operator import`, `kubectl`, Helm, GitHub CLI, OpenSSH, `curl`, `jq`, OpenSSL 3, `dig`, Podman en ejecución y, para el perfil original, Doormat. El instalador AAP usa también `shasum`, `awk`, `base64` y `tar`. El flujo local está preparado para macOS con Homebrew o RHEL 9; la lectura del almacén CA de Linux usa `/etc/pki/tls/certs/ca-bundle.crt`. Azure y GitHub deben tener una sesión válida. La licencia se lee de `../vault.hclic` o de `VAULT_LICENSE_FILE`; jamás se incluye en user-data o Terraform.
 
 Ajustar `.env` al entorno. La fase de descubrimiento identifica VPC y tres subredes públicas. El primer despliegue usa `DNS_ZONE_NAME`; las ejecuciones siguientes conservan la zona y el orden de subredes registrados. Antes de aplicar, el notebook inspecciona el plan y aborta si contiene destrucciones o sustituciones. La configuración explícita se conserva en `.state/deployment-input.json` y `terraform/infrastructure/runtime.auto.tfvars.json`. El acceso SSH y API directa se restringe a la IPv4 `/32` del operador.
 
@@ -35,6 +39,8 @@ Ajustar `.env` al entorno. La fase de descubrimiento identifica VPC y tres subre
 
 ```bash
 .venv/bin/python scripts/validate.py
+.venv/bin/python scripts/validate_docs.py
+# Los dos comandos anteriores son locales. El siguiente despliega y ejecuta casos:
 .venv/bin/python scripts/evaluate.py
 # Repetir casos fallidos o cuyo código haya cambiado desde la evaluación:
 .venv/bin/python scripts/evaluate.py --retry-failed
@@ -42,7 +48,7 @@ Ajustar `.env` al entorno. La fase de descubrimiento identifica VPC y tres subre
 .venv/bin/python scripts/evaluate.py 6_Oracle_DB_Engine
 ```
 
-Los notebooks se abren en Jupyter con el kernel `Vault RHEL9 PoC`, igual que los originales basados en IPython. **Todas las celdas operativas son `%%bash`** y muestran directamente los comandos `aws`, `az`, `vault`, `curl`, `kubectl`, `terraform`, `ssh` y `openssl`, junto con los payloads JSON, políticas HCL, SQL y manifiestos YAML. No llaman a los helpers Python de la primera versión.
+Para la interfaz interactiva, instalar JupyterLab con `.venv/bin/pip install jupyterlab` y abrir `.venv/bin/jupyter lab` desde `vm-rhel9`. Los notebooks se abren con el kernel `Vault RHEL9 PoC`, igual que los originales basados en IPython. **Todas las celdas operativas son `%%bash`** y muestran directamente los comandos `aws`, `az`, `vault`, `curl`, `kubectl`, `terraform`, `ssh` y `openssl`, junto con los payloads JSON, políticas HCL, SQL y manifiestos YAML. No llaman a los helpers Python de la primera versión.
 
 Para copiar una celda a una terminal **Bash**, situarse en `vm-rhel9/notebooks` y quitar únicamente la primera línea `%%bash`. Cada celda carga sus variables desde `../scripts/notebook-env.sh`; ese archivo solo prepara el entorno. Las variables que deben sobrevivir entre celdas se guardan en `.state/`, por lo que no se depende de que `%%bash` conserve el shell.
 
@@ -55,11 +61,13 @@ bash ../notebook_sources/5_Secret_Sync_AWS_IRSA_AssumeRole.sh
 
 Python queda como herramienta de generación/validación de documentos y evaluación Jupyter. Los antiguos helpers se conservan por compatibilidad, pero los notebooks no los usan. Los notebooks ejecutados y los resultados previos de la edición Python no acreditan la nueva edición Bash: el informe identifica expresamente la implementación evaluada.
 
-`reports/EVALUATION.md` resume la última evaluación; `reports/results.json` registra estado, fecha, duración y copia ejecutada para cada caso. Puede regenerarse el resumen con `.venv/bin/python scripts/report.py`. `passed` requiere completar todas las celdas y sus comprobaciones. `failed` identifica un fallo de ejecución o una assertion; `blocked` identifica un prerrequisito externo ausente. `reports/static-validation.json` es solo validación local de estructura, cobertura y sintaxis, y no acredita funcionalidad.
+[reports/EVALUATION.md](reports/EVALUATION.md) resume la última evaluación funcional, anterior a la retirada; `reports/results.json` registra estado, fecha, duración y copia ejecutada para cada caso. Puede regenerarse el resumen con `.venv/bin/python scripts/report.py`. `passed` requiere completar todas las celdas y sus comprobaciones. `failed` identifica un fallo de ejecución o una assertion; `blocked` identifica un prerrequisito externo ausente. `reports/static-validation.json` es solo validación local de estructura, cobertura y sintaxis, y no acredita funcionalidad.
 
 El orden del evaluador respeta las dependencias: primario → integraciones → secundario → activación PR. Los notebooks que consumen una base de datos preparan su dependencia. El secundario se inicializa una sola vez; después de habilitar PR, su token root de bootstrap deja de servir y las pruebas se autentican mediante un método replicado. La activación reinicia los standbys que se hayan sellado al cambiar las claves de barrera y comprueba los tres nodos secundarios; véase [auto-unseal y replicación](https://developer.hashicorp.com/vault/docs/concepts/seal).
 
 ## Qué comprueban los casos
+
+La revisión de instrucciones, enlaces y sintaxis está registrada en [DOCUMENTATION_VALIDATION.md](reports/DOCUMENTATION_VALIDATION.md). Es independiente de la evaluación funcional histórica.
 
 - GitHub OIDC: un workflow real autentica con JWT sujeto a repositorio/rama y lee un secreto sin imprimirlo.
 - Agent/WildFly: la aplicación comprueba el secreto renderizado; la actualización KV dispara reinicio mediante template exec. El caso dinámico conecta por JDBC, revoca credenciales y usa un timer systemd como equivalente del cron original.
@@ -75,9 +83,9 @@ El orden del evaluador respeta las dependencias: primario → integraciones → 
 - Benchmark: AppRole y KV v2 contra las VMs, 50 RPS/5 workers/30 s; ambas ratios deben ser 100%.
 - Complemento OpenShift: dos modalidades JWT (claves locales y JWKS público) y credenciales STS verificadas. Se evalúa su funcionalidad Kubernetes en EKS; esta ejecución no valida SCC/OpenShift.
 
-## Acceso a la demo desplegada
+## Acceso después de desplegar
 
-Las IP y los comandos SSH vigentes están en [reports/ACCESS.md](reports/ACCESS.md).
+[reports/ACCESS.md](reports/ACCESS.md) conserva el inventario histórico; sus IP no deben usarse tras la retirada. Después de un nuevo despliegue, obtener direcciones y credenciales del nuevo `.state/` siguiendo [EXECUTION.md](EXECUTION.md#comprobaciones-de-acceso).
 
 Los endpoints se obtienen de `.state/infrastructure.json`:
 
@@ -91,7 +99,8 @@ Los notebooks de integración y los consumidores AAP, Agent/WildFly, VSO, CSI, G
 Para abrir Grafana con el contexto configurado:
 
 ```bash
-kubectl --context arn:aws:eks:eu-central-1:492487827579:cluster/eks-infra-dev -n vm-monitoring port-forward svc/grafana 3000:3000
+source scripts/notebook-env.sh
+"${KUBECTL[@]}" -n vm-monitoring port-forward svc/grafana 3000:3000
 ```
 
 Abrir `http://localhost:3000`; usuario `admin`, contraseña local en `.state/grafana-password`. La credencial de bootstrap de Vault está en `.state/primary-init.json`; mantener ese archivo fuera de Git. Los informes públicos de despliegue y benchmark no contienen tokens.
@@ -102,11 +111,11 @@ Abrir `http://localhost:3000`; usuario `admin`, contraseña local en `.state/gra
 
 Azure toma `AZURE_SUBSCRIPTION_ID` y `AZURE_TENANT_ID` del `.env` original (o de esta variante si se definen); valida la sesión de Azure CLI y su tenant. Si caduca, ejecutar `az login --tenant <tenant>` con la intervención interactiva habitual.
 
-Los tokens de reviewer Kubernetes/engine y métricas duran 24 horas: repetir su configuración antes de otra sesión de demo. Las credenciales AppRole tienen TTL de 24 horas. La API usa Let’s Encrypt: el certificado actual caduca el 24 de diciembre de 2026; renovar con `load-balancing/renew-public-certificates.sh` y una sesión Doormat vigente. El mTLS de 8201 lo gestiona Vault. Los estados y claves de recuperación se conservan para reanudar o retirar el entorno.
+Los tokens de reviewer Kubernetes/engine y métricas duran 24 horas: repetir su configuración antes de otra sesión de demo. Las credenciales AppRole tienen TTL de 24 horas. La API usa Let’s Encrypt: el certificado de la ejecución retirada tenía caducidad el 24 de diciembre de 2026; comprobar la nueva emisión al redesplegar; renovar con `load-balancing/renew-public-certificates.sh` y una sesión Doormat vigente. El mTLS de 8201 lo gestiona Vault. Los estados y claves de recuperación conservados pertenecen al entorno retirado y no sirven para recuperar una nueva instalación.
 
 ## Limpieza
 
-Consultar `scripts/cleanup.py --help`. La limpieza es explícita, por fases, y nunca forma parte de la evaluación automática. Primero se retiran los escenarios cloud/Kubernetes; después, la infraestructura. No ejecutar `terraform destroy` sobre los módulos originales del directorio padre.
+La limpieza es explícita y nunca forma parte de la evaluación automática. Seguir el [orden de retirada y los límites del helper](EXECUTION.md#retirada). `scripts/cleanup.py` es un helper parcial: no retira AAP, todos los controladores/CRD ni EKS y no resuelve por sí solo los problemas de Secrets Sync observados. No presentarlo como un borrado completo. EKS se retira por HCP Terraform únicamente después de las dependencias VM. No ejecutar `terraform destroy` sobre los módulos originales del directorio padre.
 
 ## Referencias
 

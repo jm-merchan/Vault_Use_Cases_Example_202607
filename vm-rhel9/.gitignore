@@ -5,6 +5,7 @@ __pycache__/
 .terraform/
 *.tfstate*
 *.tfplan
+ansible-automation-platform-containerized-setup-bundle-*.tar.gz
 *.auto.tfvars.json
 reports/*.executed.ipynb
 # Parent repository ignores directories named scripts and all *lock* files.
@@ -12,3 +13,6 @@ reports/*.executed.ipynb
 !scripts/**
 scripts/**/__pycache__/
 !terraform/**/.terraform.lock.hcl
+# This is an executable scenario, not a disposable backup.
+!notebooks/_Backup_VSO_Openshift.ipynb
+!notebook_sources/_Backup_VSO_Openshift.sh

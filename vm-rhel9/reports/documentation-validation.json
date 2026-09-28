@@ -1,0 +1,40 @@
+{
+  "validated_at": "2026-09-25T16:56:37.296287+00:00",
+  "status": "passed",
+  "scope": "Offline documentation, local links, syntax and historical code comparison only; no deployment or live evaluation",
+  "counts": {
+    "markdown_files": 10,
+    "notebooks": 26,
+    "notebook_bash_cells": 126,
+    "documented_bash_blocks": 27,
+    "structured_blocks": 1,
+    "shell_files": 45,
+    "local_links": 118,
+    "historical_code_matches": 23
+  },
+  "external_links": [
+    "https://access.redhat.com/solutions/7147516",
+    "https://app.terraform.io/app/jose-merchan/workspaces/eks-infra-vcs",
+    "https://app.terraform.io/app/jose-merchan/workspaces/eks-infra-vcs/runs/run-y47MfAeTeiYqVVz1",
+    "https://developer.hashicorp.com/vault/api-docs/auth/jwt",
+    "https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance",
+    "https://developer.hashicorp.com/vault/api-docs/system/secrets-sync",
+    "https://developer.hashicorp.com/vault/docs/auth/cert",
+    "https://developer.hashicorp.com/vault/docs/auth/kubernetes",
+    "https://developer.hashicorp.com/vault/docs/concepts/seal",
+    "https://developer.hashicorp.com/vault/docs/configuration/replication",
+    "https://developer.hashicorp.com/vault/docs/secrets/databases/oracle",
+    "https://developer.hashicorp.com/vault/tutorials/day-one-raft/raft-deployment-guide",
+    "https://developer.hashicorp.com/vault/tutorials/monitoring/monitor-replication#port-traffic-consideration-with-load-balancer",
+    "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html",
+    "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/plan-ref_cont_a_env_a",
+    "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-configure_the_hashicorp_vault_server",
+    "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-oidc_authentication_for_hashicorp_vault",
+    "https://github.com/jm-merchan/Vault_Use_Cases_Example_202607/actions/runs/36135438761",
+    "https://github.com/jm-merchan/Vault_Use_Cases_Example_202607/actions/runs/36136589045",
+    "https://github.com/jm-merchan/Vault_Use_Cases_Example_202607/tree/codex/aap-vm-vault",
+    "https://www.ibm.com/support/pages/vault-replication-issues-aws-auto-scaling-groups"
+  ],
+  "external_links_scope": "Collected only; network verification is separate from this offline validator",
+  "errors": []
+}

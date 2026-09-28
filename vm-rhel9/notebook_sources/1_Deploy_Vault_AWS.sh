@@ -58,7 +58,7 @@ terraform -chdir="$VM_ROOT/terraform/infrastructure" apply -input=false "$STATE/
 terraform -chdir="$VM_ROOT/terraform/infrastructure" output -json | jq 'with_entries(.value=.value.value)' > "$STATE/infrastructure.json"
 jq '{vault_address,nodes:(.nodes | map_values({public_ip,private_ip,cluster,zone}))}' "$STATE/infrastructure.json"
 
-# TLS interno con OpenSSL
+# TLS público con Let’s Encrypt y verificación OpenSSL
 set -euo pipefail
 source ../scripts/notebook-env.sh
 CLUSTER=primary

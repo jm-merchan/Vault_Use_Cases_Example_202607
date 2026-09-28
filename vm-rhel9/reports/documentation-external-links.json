@@ -1,0 +1,123 @@
+{
+  "checked_at": "2026-09-25T16:47:35.039985+00:00",
+  "scope": "Public documentation links only. Authenticated HCP/GitHub history and retired demo endpoints excluded. HTTP success does not validate deployment.",
+  "checks": [
+    {
+      "url": "https://access.redhat.com/solutions/7147516",
+      "http_status": 200,
+      "final_url": "https://access.redhat.com/solutions/7147516",
+      "title": "OIDC-suffixed HashiCorp Vault credential types do not appear after enabling FEATURE_OIDC_WORKLOAD_IDENTITY_ENABLED in a containerized Ansible Automation Platform - Red Hat Customer Portal"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/api-docs/auth/jwt",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/api-docs/auth/jwt",
+      "title": "JWT/OIDC - Auth Methods - HTTP API | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/api-docs/system/replication/replication-performance",
+      "title": "/sys/replication - HTTP API | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/api-docs/system/secrets-sync",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/api-docs/system/secrets-sync",
+      "title": "/sys/sync - HTTP API | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/docs/auth/cert",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/docs/auth/cert",
+      "title": "TLS Certificates - Auth Methods | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/docs/auth/kubernetes",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/docs/auth/kubernetes",
+      "title": "Kubernetes - Auth Methods | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/docs/concepts/seal",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/docs/concepts/seal",
+      "title": "Seal/Unseal | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/docs/configuration/replication",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/docs/configuration/replication",
+      "title": "Replication - Configuration | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/docs/secrets/databases/oracle",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/docs/secrets/databases/oracle",
+      "title": "Oracle database secrets engine | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/tutorials/day-one-raft/raft-deployment-guide",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/tutorials/day-one-raft/raft-deployment-guide",
+      "title": "Vault with integrated storage deployment guide | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault/tutorials/monitoring/monitor-replication#port-traffic-consideration-with-load-balancer",
+      "http_status": 200,
+      "final_url": "https://developer.hashicorp.com/vault/tutorials/monitoring/monitor-replication#port-traffic-consideration-with-load-balancer",
+      "title": "Monitor enterprise replication | Vault | HashiCorp Developer"
+    },
+    {
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html",
+      "http_status": 200,
+      "final_url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/mutual-authentication.html",
+      "title": "Mutual authentication with TLS in Application Load Balancer - Elastic Load Balancing"
+    },
+    {
+      "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/plan-ref_cont_a_env_a",
+      "http_status": 403,
+      "final_url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/plan-ref_cont_a_env_a",
+      "title": "Access Denied",
+      "fallback_verification": {
+        "method": "web browsing tool: opened exact URL and retrieved titled documentation page",
+        "result": "content retrieved",
+        "date": "2026-09-25"
+      }
+    },
+    {
+      "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-configure_the_hashicorp_vault_server",
+      "http_status": 403,
+      "final_url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-configure_the_hashicorp_vault_server",
+      "title": "Access Denied",
+      "fallback_verification": {
+        "method": "web browsing tool: opened exact URL and retrieved titled documentation page",
+        "result": "content retrieved",
+        "date": "2026-09-25"
+      }
+    },
+    {
+      "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-oidc_authentication_for_hashicorp_vault",
+      "http_status": 403,
+      "final_url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.7/whats_new-oidc_authentication_for_hashicorp_vault",
+      "title": "Access Denied",
+      "fallback_verification": {
+        "method": "web browsing tool: opened exact URL and retrieved titled documentation page",
+        "result": "content retrieved",
+        "date": "2026-09-25"
+      }
+    },
+    {
+      "url": "https://www.ibm.com/support/pages/vault-replication-issues-aws-auto-scaling-groups",
+      "http_status": 200,
+      "final_url": "https://www.ibm.com/support/pages/vault-replication-issues-aws-auto-scaling-groups",
+      "title": "Vault Replication issues on AWS Auto Scaling Groups"
+    }
+  ],
+  "summary": {
+    "public_references": 16,
+    "http_200": 13,
+    "direct_http_403_with_web_content_retrieved": 3,
+    "missing_pages": 0
+  }
+}

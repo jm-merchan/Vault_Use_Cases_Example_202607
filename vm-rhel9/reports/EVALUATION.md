@@ -1,5 +1,7 @@
 # Evaluación de la variante RHEL 9
 
+> **Evidencia histórica anterior a la retirada del 25-09-2026.** No acredita disponibilidad actual. Véase [TEARDOWN.md](TEARDOWN.md) y la [guía de ejecución](../EXECUTION.md).
+
 Informe generado: 2026-09-25T13:11:57.522293+00:00
 
 23 correctos, 0 fallidos, 0 bloqueados; 0 pendientes.
@@ -39,6 +41,6 @@ Cada estado procede de ejecutar el notebook completo con nbclient: celdas %%bash
 - El caso originalmente estático de AWS usa ahora un rol dedicado, según la instrucción del usuario. No se crean usuarios IAM.
 - El complemento llamado OpenShift verifica las dos modalidades JWT/VSO en el EKS disponible. No acredita una ejecución de SCC en OpenShift.
 - Estado, tokens, certificados privados y copias ejecutadas se guardan localmente y se excluyen de Git.
-- Los recursos permanecen desplegados para continuar la demo.
+- La evaluación no retira recursos automáticamente. Este entorno se retiró después de las pruebas; las fechas originales se conservan en `results.json`.
 - GitHub read: [ejecución real](https://github.com/jm-merchan/Vault_Use_Cases_Example_202607/actions/runs/36135438761).
 - GitHub engine: [ejecución real](https://github.com/jm-merchan/Vault_Use_Cases_Example_202607/actions/runs/36136589045).

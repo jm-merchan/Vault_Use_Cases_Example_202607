@@ -327,7 +327,7 @@ if [[ "$CLUSTER" == primary ]]; then
   curl -fsS "$PUBLIC_ADDR/v1/sys/health" | jq -e '.initialized and (.sealed|not)' >/dev/null
 fi
 '''
-add('1_Deploy_Vault_AWS','Vault Enterprise en VMs RHEL 9',[('Descubrir AWS, red y desplegar Terraform',DISCOVER),('TLS interno con OpenSSL',CERTS),('Configurar Vault y systemd por SSH',CONFIGURE),('Inicializar, unir Raft y verificar RHEL 9',INIT),('Fallo del líder y recuperación',FAILOVER)],'Seis nodos primarios, tres secundarios y una VM de aplicación. El código cloud-init completo está en scripts/cloud-init.sh.tftpl; la infraestructura se declara en terraform/infrastructure.',preamble='CLUSTER=primary\nNODE_COUNT=6\n')
+add('1_Deploy_Vault_AWS','Vault Enterprise en VMs RHEL 9',[('Descubrir AWS, red y desplegar Terraform',DISCOVER),('TLS público con Let’s Encrypt y verificación OpenSSL',CERTS),('Configurar Vault y systemd por SSH',CONFIGURE),('Inicializar, unir Raft y verificar RHEL 9',INIT),('Fallo del líder y recuperación',FAILOVER)],'Seis nodos primarios, tres secundarios y una VM de aplicación. El código cloud-init completo está en [cloud-init.sh.tftpl](../scripts/cloud-init.sh.tftpl); la infraestructura se declara en [terraform/infrastructure](../terraform/infrastructure/).',preamble='CLUSTER=primary\nNODE_COUNT=6\n')
 add('9_VAULT_PR','Clúster secundario RHEL 9',[('Configurar los tres nodos por SSH',CONFIGURE),('Inicialización y estado de todos los nodos',INIT)],'Después de activar PR, el token inicial del secundario deja de ser válido. Los standbys sellados se reinician para ejecutar auto-unseal.',preamble='CLUSTER=secondary\nNODE_COUNT=3\n')
 def manifest(ns,kind,name):
     text=(ROOT/f'assets/manifests/{ns}-{kind}-{name}.yaml').read_text()
@@ -824,7 +824,7 @@ while read -r name; do
 done < <(jq -r 'keys[]' "$STATE/import-{provider}-values.json")
 echo '{count} valores idénticos después del round-trip'
 '''
-    add('7_Secret_Migrate_'+('AWS' if provider=='aws' else 'Azure'),'Importar secretos de '+provider.upper(),[('Crear las fuentes cloud aisladas',prep),('Plan, importación plana/anidada y metadata',imp),('Secrets Sync al nombre original y comparación',roundtrip)],'Azure reutiliza el Key Vault del notebook Azure CLI SPN. Los valores privados se comparan sin imprimirlos.')
+    add('7_Secret_Migrate_'+('AWS' if provider=='aws' else 'Azure'),'Importar secretos de '+provider.upper(),[('Crear las fuentes cloud aisladas',prep),('Plan, importación plana/anidada y metadata',imp),('Secrets Sync al nombre original y comparación',roundtrip)],('Azure reutiliza el Key Vault del notebook Azure CLI SPN. ' if provider=='azure' else '')+'Los valores privados se comparan sin imprimirlos.')
 LDAP_CONFIG=r'''
 for user in alice peter; do
   [[ -s "$STATE/ldap-$user-password" ]] || openssl rand -hex 20 | tr -d '\n' > "$STATE/ldap-$user-password"
@@ -1327,7 +1327,7 @@ for name,title,steps,desc,preamble in CASES:
     nb.metadata['kernelspec']={'display_name':'Vault RHEL9 PoC','language':'python','name':'vm-rhel9-poc'}
     nb.metadata['source_notebook']=name+'.ipynb'
     nb.metadata['implementation']='bash-cli'
-    nb.cells=[nbformat.v4.new_markdown_cell('# '+title+'\n\n'+desc+'\n\nEjecutar en orden. Todas las operaciones están en celdas `%%bash`, copiables a una terminal Bash quitando únicamente esa primera línea. El directorio de trabajo es `vm-rhel9/notebooks`. `notebook-env.sh` carga rutas y variables; no despliega ni configura servicios. Los archivos sensibles van a `.state/` con permisos privados.')]
+    nb.cells=[nbformat.v4.new_markdown_cell('# '+title+'\n\n'+desc+'\n\nEjecutar en orden. Todas las operaciones están en celdas `%%bash`, copiables a una terminal Bash quitando únicamente esa primera línea. El directorio de trabajo es `vm-rhel9/notebooks`. `notebook-env.sh` carga rutas y variables; no despliega ni configura servicios. Los archivos sensibles van a `.state/` con permisos privados.\n\nConsultar la [guía de ejecución](../EXECUTION.md) para prerrequisitos, orden y redespliegue. La infraestructura de septiembre de 2026 fue retirada; las salidas conservadas son históricas.')]
     chunks=['#!/usr/bin/env bash\n# Ejecutar desde vm-rhel9/notebooks\n']
     for heading,body in steps:
         # Provisioning, replication, audit maintenance and per-node metrics keep

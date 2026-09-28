@@ -1,0 +1,83 @@
+{
+  "updated_at": "2026-09-25T14:44:29.542985+00:00",
+  "status": "retired_with_kms_pending_deletion",
+  "code_preserved": true,
+  "vm_resources": {
+    "ec2_instances_terminated": 11,
+    "terraform_aap_resources_destroyed": 16,
+    "terraform_infrastructure_resources_destroyed": 83,
+    "terraform_states_empty": [
+      "aap",
+      "azure-spn",
+      "azure-wif",
+      "wif",
+      "operator-role",
+      "irsa-assume-role",
+      "irsa",
+      "infrastructure"
+    ],
+    "namespaces_removed": [
+      "vm-demo",
+      "vm-consumers",
+      "vm-monitoring",
+      "vm-benchmark",
+      "vm-vso-system",
+      "vm-csi-system"
+    ],
+    "helm_releases_removed": [
+      "vm-vso",
+      "vm-csi"
+    ],
+    "azure_resource_groups_removed": [
+      "mapfre-vm-cli",
+      "mvm-spn-secrets-sync-rg",
+      "mvm-wif-secrets-sync-rg"
+    ],
+    "azure_key_vaults_purged": [
+      "mvmcli61dffaca",
+      "kv-mvm-spn-pyf6l1",
+      "kv-mvm-wif-ezafm2"
+    ],
+    "completed_at": "2026-09-25T14:24:03Z"
+  },
+  "eks": {
+    "workspace": "jose-merchan/eks-infra-vcs",
+    "cluster": "eks-infra-dev",
+    "run": "run-y47MfAeTeiYqVVz1",
+    "run_url": "https://app.terraform.io/app/jose-merchan/workspaces/eks-infra-vcs/runs/run-y47MfAeTeiYqVVz1",
+    "planned_destructions": 75,
+    "started_after_vm_retirement": true,
+    "workspace_preserved": true,
+    "status": "applied",
+    "applied_at": "2026-09-25T14:42:50+00:00",
+    "resources_destroyed": 75,
+    "final_managed_resource_count": 0,
+    "cluster_absent_in_aws": true,
+    "vpc_absent_in_aws": true
+  },
+  "aap_bundle": {
+    "path": "ansible-automation-platform-containerized-setup-bundle-2.7-1.1-x86_64.tar.gz",
+    "sha256": "12343d643503d61fb0353f9af167a8f6cf0e6e53a5f7b206c1900fb4f9610863",
+    "checksum_verified": true,
+    "default_path_updated": true,
+    "installer_bash_syntax": "passed"
+  },
+  "kms": [
+    {
+      "KeyId": "80e0efce-02d0-469a-93ac-06aa162cab71",
+      "State": "PendingDeletion",
+      "DeletionDate": "2026-10-25T15:05:12.290000+01:00"
+    },
+    {
+      "KeyId": "d79b1e21-a9ed-4059-8c61-5e870666568f",
+      "State": "PendingDeletion",
+      "DeletionDate": "2026-10-25T15:42:40.160000+01:00"
+    }
+  ],
+  "verification": {
+    "bundle_checksum": "passed",
+    "installer_bash_syntax": "passed",
+    "code_files_deleted": false,
+    "aap_notebook_operational_cells_unchanged": true
+  }
+}

@@ -4,11 +4,21 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 manifest=json.loads((ROOT/'scenario-map.json').read_text())
 results=json.loads((ROOT/'reports/results.json').read_text())
+# A cached inventory and successful notebooks do not prove a deployment is live.
+teardown_path=ROOT/'reports/TEARDOWN.json'
+notice=[]
+if teardown_path.exists():
+    teardown=json.loads(teardown_path.read_text())
+    retired_at=teardown['updated_at']
+    historical=all(r.get('evaluated_at','') <= retired_at for r in results.values())
+    label='Evidencia histórica anterior a la retirada.' if historical else 'Retirada anterior registrada; comprobar las fechas de cada caso.'
+    notice=[f'> **{label}** Retirada registrada: {retired_at}. Este generador no consulta cloud. Véase [TEARDOWN.md](TEARDOWN.md).','']
 counts={s:sum(r['status']==s for r in results.values()) for s in ['passed','failed','blocked']}
 lines=['# Evaluación de la variante RHEL 9','',f'Informe generado: {datetime.datetime.now(datetime.timezone.utc).isoformat()}','',
        f"{counts['passed']} correctos, {counts['failed']} fallidos, {counts['blocked']} bloqueados; {len(manifest)-len(results)} pendientes.",'',
        'Cada estado procede de ejecutar el notebook completo con nbclient: celdas %%bash, comandos CLI y comprobaciones activas. La implementación evaluada se registra como bash-cli en results.json. La validación estática se registra por separado.','',
        '| Notebook | Resultado | Duración (s) |','|---|---|---|']
+lines[2:2]=notice
 for item in manifest:
     r=results.get(item['source'],{})
     lines.append(f"| [{item['source']}](../{item['vm_notebook']}) | {r.get('status','pending')} | {r.get('seconds','—')} |")
@@ -19,7 +29,7 @@ lines+=['','## Alcance de la adaptación','',
         '- El caso originalmente estático de AWS usa ahora un rol dedicado, según la instrucción del usuario. No se crean usuarios IAM.',
         '- El complemento llamado OpenShift verifica las dos modalidades JWT/VSO en el EKS disponible. No acredita una ejecución de SCC en OpenShift.',
         '- Estado, tokens, certificados privados y copias ejecutadas se guardan localmente y se excluyen de Git.',
-        '- Los recursos permanecen desplegados para continuar la demo.']
+        '- La evaluación no retira recursos automáticamente. Este informe describe pruebas fechadas, no disponibilidad actual; seguir la [guía de ejecución](../EXECUTION.md).']
 for name in ['read','engine']:
     p=ROOT/'.state'/('github-'+name+'.json')
     if p.exists():
@@ -29,18 +39,19 @@ sources=list((ROOT/'notebooks').glob('*.ipynb'))+list((ROOT/'notebook_sources').
 hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(sources)}
 (ROOT/'reports/source-hashes.json').write_text(json.dumps(hashes,indent=2)+'\n')
 print(json.dumps(counts))
-# Access instructions always follow the current Terraform inventory, never stale IPs.
+# The inventory is local and can survive teardown; never claim live access from it.
 inventory_path=ROOT/'.state/infrastructure.json'
 if inventory_path.exists():
     inventory=json.loads(inventory_path.read_text())
     access=['# Acceso a la variante VM','',
             'Vault: '+inventory['vault_address']+'/ui/','',
             'Aplicaciones: '+inventory.get('vault_application_address','pendiente de desplegar')+' (activo y performance standbys).','',
-            'Login: método Token, namespace vacío (root). El token vigente está en `.state/primary-init.json`.','',
+            'Login después de desplegar: método Token, namespace vacío (root). Usar `.state/primary-init.json` del despliegue nuevo; el token conservado de la retirada es histórico.','',
             'Desde `vm-rhel9`, copiarlo al portapapeles de macOS sin imprimirlo:','',
             '```bash',"jq -r '.root_token' .state/primary-init.json | pbcopy",'```','',
             'SSH: usuario `ec2-user`, clave `.state/id_ed25519`; usar `sudo -i` dentro de la VM.','',
             '| Nodo | IP pública | Comando desde vm-rhel9 |','|---|---|---|']
+    access[2:2]=notice+['Inventario local: no verifica que estas IP sigan perteneciendo a la demo. Para redesplegar y obtener accesos actuales, seguir [EXECUTION.md](../EXECUTION.md#comprobaciones-de-acceso).','']
     for name,node in inventory['nodes'].items():
         access.append(f"| {name} | {node['public_ip']} | `ssh -i .state/id_ed25519 ec2-user@{node['public_ip']}` |")
     access+=['','SSH está limitado a la IP pública del operador registrada en el despliegue.',

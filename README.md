@@ -2,6 +2,10 @@
 
 Este repositorio contiene una prueba de concepto genérica para desplegar y validar capacidades de HashiCorp Vault en entornos Kubernetes y multicloud. Los escenarios se presentan como notebooks ejecutables y cubren desde la instalación inicial hasta integraciones, gobierno, observabilidad y pruebas de rendimiento.
 
+## Variante para VMs RHEL 9
+
+La implementación equivalente está en [vm-rhel9/README.md](vm-rhel9/README.md), con [instrucciones de ejecución](vm-rhel9/EXECUTION.md), 23 notebooks CLI y los complementos AAP y balanceo. El entorno de la demo, incluido EKS, se retiró el 25-09-2026; los resultados conservados son históricos. Véase [el informe de retirada](vm-rhel9/reports/TEARDOWN.md). Los pasos siguientes describen los notebooks originales de Kubernetes.
+
 ## Objetivos
 
 - Desplegar Vault en Kubernetes con alta disponibilidad y auto-unseal.
@@ -44,6 +48,7 @@ La idempotencia se limita a los flujos automatizados por cada notebook. Deben re
 | `5_Secret_Sync_Azure_Terraform_SPN.ipynb` | Configuración de la sincronización con Azure mediante Terraform y Service Principal. |
 | `5_Secret_Sync_Azure_Terraform_WIF.ipynb` | Configuración de la sincronización con Azure mediante Terraform y federación de identidad. |
 | `6_Oracle_DB_Engine.ipynb` | Registro y validación del plugin de base de datos Oracle. |
+| `7_Secret_Migrate_AWS.ipynb` | Importación de secretos desde AWS Secrets Manager. |
 | `7_Secret_Migrate_Azure.ipynb` | Importación de secretos desde Azure Key Vault. |
 | `8_RBAC_Revoke_Namespace.ipynb` | RBAC, LDAP, namespaces, bloqueo y revocación de tokens y leases. |
 | `9_VAULT_PR.ipynb` | Preparación y validación de un entorno de Performance Replication. |
@@ -74,7 +79,7 @@ No todos los requisitos son necesarios para ejecutar todos los notebooks. Se rec
 1. Copiar el fichero de ejemplo:
 
    ```bash
-   cp .env.example .env
+   [[ -f .env ]] || cp .env.example .env
    ```
 
 2. Completar únicamente las variables requeridas por el escenario.
